@@ -1,0 +1,647 @@
+# Predictions FINAL — Phase 3c
+# Expedição: exp-retrodiction
+# Status: SEALED (post-anomalist, pre-validation)
+# Temporal cutoff: 2017-12-31
+#
+# Consolidation:
+#   - 6 SOBREVIVERAM intactas (veredicto SURVIVED)
+#   - 10 REFORMULADAS conforme sugestões do Anomalist (veredicto WOUNDED-REFORMULATED)
+#   - 2 DESTRUÍDAS removidas do pool (PRED-GLY-010, PRED-GLY-018)
+#   - Total final: 16
+
+schema_version: "1.0"
+expedition: "exp-retrodiction"
+phase: "3-final"
+sealed_at: "2026-04-23T03:57:02Z"
+temporal_cutoff: "2017-12-31"
+domain_primary: "glymphatic_system"
+opus_version: "claude-opus-4-7"
+operator: "Matheus Fink"
+
+predictions:
+
+  # =========================================================================
+  # BLOCO 1 — Parkinson's / α-synuclein
+  # =========================================================================
+
+  - id: PRED-GLY-001
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-001
+    claim: |
+      α-synuclein monomérica e oligomérica (fração extracelular/ISF) é clearada
+      via pathway glinfático no cérebro murino em cinética mensurável e na mesma
+      ordem de magnitude da de amyloid-β (mas não necessariamente idêntica),
+      e o knockout de AQP4 reduz significativamente essa clearance.
+    predicted_window: "2018-2021"
+    confidence: 0.65
+    anchors:
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "The glymphatic pathway mediates CSF-ISF exchange driving clearance of interstitial solutes including amyloid-β."
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Amyloid-β clearance increases during sleep via glymphatic mechanism."
+      - doi: "10.1523/JNEUROSCI.3020-14.2014"
+        year: 2014
+        excerpt: "Glymphatic function declines markedly in aged brain with reduced amyloid-β clearance."
+    falsification: |
+      Se estudos murinos 2018-2021 demonstrarem que α-synuclein NÃO é afetada
+      por AQP4 knockout (ou pela supressão anestésica de clearance glinfática),
+      OU se sua rota primária for degradação lisossomal/UPS sem componente
+      perivascular mensurável, a predição é REFUTED. Parcialmente refuted se
+      magnitude for <1/3 daquela de Aβ, mas ainda >0 (direcional preservado).
+    vectors: ["cross_domain_isomorphism", "decomposition"]
+    category: "parkinsons_glymphatic"
+    novelty: "substantial"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 72
+    reformulation_notes: |
+      Confidence 0.75 → 0.65 (extensão cross-domain sem evidência direta ≤2017).
+      "Cinética comparável" → "mesma ordem de magnitude, não idêntica".
+      Falsification ampliada: aceita parcial refuted se magnitude <1/3 da de Aβ mas >0.
+
+  - id: PRED-GLY-002
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-002
+    claim: |
+      Modelos murinos de Parkinson's (α-syn overexpression ou injeção de
+      preformed fibrils) exibirão disfunção glinfática (redução estatisticamente
+      significativa de influx perivascular, qualquer magnitude relevante)
+      ANTES do aparecimento de déficits motores detectáveis, estabelecendo
+      precedência temporal análoga àquela vista em modelos de AD. Imaging
+      deverá ser in vivo longitudinal (não end-point).
+    predicted_window: "2019-2023"
+    confidence: 0.68
+    anchors:
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "Aged mice show reduced AQP4 polarization correlated with decreased glymphatic clearance before overt pathology."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Impaired glymphatic function correlates with increased amyloid-β accumulation in mouse models of AD."
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "Glymphatic clearance is a brain-wide pathway using perivascular spaces."
+    falsification: |
+      Se o primeiro sinal mensurável em modelos PD murinos for deposição
+      α-syn sem alteração de clearance glinfática mensurável, ou se a
+      ordem temporal for inversa (patologia → disfunção), REFUTED.
+    vectors: ["temporal_projection", "cross_domain_isomorphism"]
+    category: "parkinsons_glymphatic"
+    novelty: "substantial"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 68
+    reformulation_notes: |
+      Threshold ≥30% → "redução estatisticamente significativa (qualquer magnitude)".
+      Requisito explícito de imaging in vivo longitudinal.
+      Confidence 0.68 mantido.
+
+  - id: PRED-GLY-003
+    status: "survived"
+    original_draft_id: PRED-GLY-003
+    claim: |
+      Pacientes com Parkinson's idiopática mostrarão ALPS index reduzido
+      vs controles pareados por idade em estudos MRI (effect size Cohen's
+      d ≥ 0.4), com correlação inversa entre ALPS e severity motora
+      (UPDRS).
+    predicted_window: "2019-2023"
+    confidence: 0.70
+    anchors:
+      - doi: "10.1007/s11604-017-0617-z"
+        year: 2017
+        excerpt: "ALPS index proposed as non-invasive MRI biomarker of glymphatic function along perivascular space."
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "Glymphatic clearance declines with age correlated with AQP4 mis-polarization."
+      - doi: "10.1093/brain/awx191"
+        year: 2017
+        excerpt: "Intrathecal gadobutrol MRI visualizes human glymphatic inflow over hours."
+    falsification: |
+      Se a primeira meta-análise pós-2017 de ALPS em PD mostrar d < 0.2
+      OU resultados heterogêneos sem consenso direcional, REFUTED.
+    vectors: ["temporal_projection", "decomposition"]
+    category: "parkinsons_glymphatic"
+    novelty: "incremental"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 75
+
+  - id: PRED-GLY-004
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-004
+    claim: |
+      Distúrbio comportamental do sono REM (RBD) — pródromo de PD —
+      correlacionará (não necessariamente causará) com marcadores
+      glinfáticos alterados mensuráveis (ex: ALPS reduzido, EPVS
+      aumentados), posicionando biomarker glinfático como componente
+      adicional ao perfil de risco de sinucleopatias.
+    predicted_window: "2020-2025"
+    confidence: 0.55
+    anchors:
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Sleep drives glymphatic clearance; disruption of sleep impairs amyloid clearance."
+      - doi: "10.1007/s11604-017-0617-z"
+        year: 2017
+        excerpt: "ALPS provides non-invasive readout of glymphatic activity."
+      - doi: "10.1093/brain/awx191"
+        year: 2017
+        excerpt: "First-in-human glymphatic MRI demonstrates CSF tracer dynamics."
+    falsification: |
+      Se estudos 2020-2025 mostrarem marcadores glinfáticos normais em RBD
+      pré-conversão, OU se conversão de RBD→PD não correlacionar com
+      marcadores glinfáticos, REFUTED.
+    vectors: ["cross_domain_isomorphism", "convergence_detection"]
+    category: "parkinsons_glymphatic"
+    novelty: "substantial"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 58
+    reformulation_notes: |
+      Removida framing causal "mecanisticamente glinfático como fator de risco".
+      Reformulada como correlação, não causação.
+      Biomarker adicional ao perfil de risco, não mecanismo primário.
+
+  - id: PRED-GLY-005
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-005
+    claim: |
+      A rota olfatória/cribriforme contribui significativamente (fração ≥20%
+      do efflux total de α-syn originada em bulbo olfatório) para clearance
+      de sinucleína em rostro-anterior, consistente com — mas não explicando
+      sozinha — o padrão de Braak de progressão da sinucleopatia.
+    predicted_window: "2019-2024"
+    confidence: 0.45
+    anchors:
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "The olfactory bulb and cribriform plate represent a significant efflux route to nasal/cervical lymphatics."
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "Perivascular pathways drain CSF/ISF via multiple efflux routes."
+      - doi: "10.1038/nature14432"
+        year: 2015
+        excerpt: "Dural lymphatic vessels drain CSF to deep cervical lymph nodes."
+    falsification: |
+      Se estudos anatômicos 2019-2024 demonstrarem que clearance α-syn-específica
+      via rota cribriforme for <20% do efflux total, OU que rota dural é
+      quantitativamente dominante, REFUTED.
+    vectors: ["cross_domain_isomorphism", "axiomatic_inversion"]
+    category: "parkinsons_glymphatic"
+    novelty: "high"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 50
+    reformulation_notes: |
+      Falsification tornada quantitativa: ≥20% fração de efflux como threshold.
+      "Desproporcionalmente explica" → "contribui significativamente".
+      Claim de explicação mono-causal do Braak staging relaxada.
+      Confidence 0.45 mantido (moonshot).
+
+  - id: PRED-GLY-006
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-006
+    claim: |
+      Intervenção que restaure polarização de AQP4 (farmacológica ou genética,
+      dependente de disponibilidade de ferramenta AQP4-agonista validada in
+      vivo) em modelo murino α-syn reduzirá deposição de sinucleína fosforilada
+      de forma estatisticamente significativa (p<0.05). Predição secundária
+      (desacoplada): atenuação de déficit motor como outcome secundário.
+    predicted_window: "2020-2024"
+    confidence: 0.45
+    anchors:
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "AQP4 polarization loss correlates with glymphatic decline."
+      - doi: "10.1002/glia.22575"
+        year: 2014
+        excerpt: "α-syntrophin anchors AQP4; mislocalization reduces glymphatic clearance."
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Interstitial solutes including Aβ clear faster during sleep-associated glymphatic activation."
+    falsification: |
+      Se AQP4-repolarization intervention em modelo PD não alterar
+      patologia OU piorar fenótipo, predição primária REFUTED.
+      Predição secundária avaliada independentemente.
+    vectors: ["constraint_removal", "cross_domain_isomorphism"]
+    category: "parkinsons_glymphatic"
+    novelty: "substantial"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 55
+    reformulation_notes: |
+      Threshold ≥40% → "redução estatisticamente significativa (p<0.05)".
+      Predição primária (patologia) e secundária (motor) separadas.
+      Dependência de ferramenta AQP4-agonista explicitada.
+      Confidence 0.50 → 0.45.
+
+  # =========================================================================
+  # BLOCO 2 — AQP4 controvérsia
+  # =========================================================================
+
+  - id: PRED-GLY-007
+    status: "survived"
+    original_draft_id: PRED-GLY-007
+    claim: |
+      O fenótipo de AQP4 knockout na clearance glinfática é dependente
+      do background genético do camundongo: linhas que mantêm estrutura
+      de endfeet (CD1, FVB) mostram redução menor que linhas com
+      endfeet frágeis (C57BL/6), explicando a discrepância entre
+      Iliff 2012 e Smith 2017.
+    predicted_window: "2018-2022"
+    confidence: 0.65
+    anchors:
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "AQP4 knockout reduces glymphatic CSF-ISF exchange."
+      - doi: "10.1002/glia.22575"
+        year: 2014
+        excerpt: "AQP4 functions in orthogonal arrays; α-syntrophin anchors endfoot polarization."
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "AQP4 polarization loss mechanism for age-related glymphatic decline."
+    falsification: |
+      Se estudos multi-background 2018-2022 mostrarem magnitude de
+      redução consistente entre linhas (ou aleatória sem correlação
+      com anatomia endfoot), REFUTED.
+    vectors: ["decomposition", "failure_archaeology"]
+    category: "aqp4_controversy"
+    novelty: "substantial"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 72
+
+  - id: PRED-GLY-008
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-008
+    claim: |
+      Função estrutural de AQP4 (manutenção de endfoot integrity e
+      polarização de transporte) contribui significativamente (≥50%)
+      ao fenótipo glinfático, comparável ou maior que função de canal
+      de água. Knockouts condicionais que preservem anatomia (dependente
+      de disponibilidade de mutação AQP4 que separe funções) mostrarão
+      clearance parcialmente preservada. Branch: se o modelo Smith 2017
+      vencer globalmente (AQP4 marginal), predição parcialmente refuted
+      mas direcionalmente neutra.
+    predicted_window: "2019-2024"
+    confidence: 0.50
+    anchors:
+      - doi: "10.1002/glia.22575"
+        year: 2014
+        excerpt: "AQP4 M23 forms orthogonal arrays; structural role at endfoot is critical."
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "AQP4 is essential at blood-brain interface for efficient exchange."
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "Loss of polarization correlates with reduced clearance."
+    falsification: |
+      Se conditional AQP4 KO preservando OAP reduzir clearance tanto
+      quanto KO global (≥90% do efeito), a hipótese estrutural é
+      REFUTED e efflux de água é confirmado como função primária.
+    vectors: ["axiomatic_inversion", "constraint_removal"]
+    category: "aqp4_controversy"
+    novelty: "high"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 60
+    reformulation_notes: |
+      Dicotomia absoluta (structural vs water flux) → contribuição quantitativa (≥50%).
+      Dependência de tool development (mutação separando funções) explicitada.
+      Branch Smith-side adicionado (direcionalmente neutra se Smith vencer).
+      Confidence 0.55 → 0.50.
+
+  - id: PRED-GLY-009
+    status: "survived"
+    original_draft_id: PRED-GLY-009
+    claim: |
+      Modelagem computacional whole-brain (derivada de diffusion MRI)
+      resolverá o debate Iliff-Smith em favor de transporte por
+      DISPERSÃO oscilatória (pulsatilidade cardíaca + respiração)
+      ao invés de bulk flow contínuo ou difusão pura, com velocidades
+      perivasculares médias <50 μm/s mas transporte efetivo alto.
+    predicted_window: "2019-2024"
+    confidence: 0.60
+    anchors:
+      - doi: "10.1126/scitranslmed.3003748"
+        year: 2012
+        excerpt: "Perivascular transport is consistent with convective movement of CSF."
+      - doi: "10.1523/JNEUROSCI.1592-13.2013"
+        year: 2013
+        excerpt: "Arterial pulsations are primary driver of perivascular CSF flow."
+      - doi: "10.1523/JNEUROSCI.3246-14.2015"
+        year: 2015
+        excerpt: "Respiratory pressure variations contribute to CSF movement."
+    falsification: |
+      Se modelos whole-brain 2019-2024 convergirem em bulk flow
+      steady-state OU em difusão pura sem papel oscilatório, REFUTED.
+    vectors: ["scale_bridging", "convergence_detection"]
+    category: "aqp4_controversy"
+    novelty: "substantial"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 70
+    revalidation:
+      phase: "Phase 3.8 (2026-04-23)"
+      prior_state: "invalidated-post-seal (Phase 3.7, based on gemini-2.5-flash single-model flag)"
+      new_state: "survived (pool-valid)"
+      reason: "Upon re-audit with more capable models (gemini-2.5-pro and gemini-3.1-pro-preview), both independent models classified this prediction as CLEAN. Pro 3.1 explicit reasoning: 'The prediction relies on pre-2018 concepts (the debate between Iliff bulk flow and Smith diffusion, and early models of oscillatory dispersion) to make a plausible forward-looking claim about whole-brain modeling and perivascular velocities without using post-2017 terminology.' The original Phase 3.7 invalidation was driven by gemini-2.5-flash alone and was not confirmed by higher-capability models."
+      detected_by: "Multi-model re-audit Phase 3.8 (gemini-2.5-pro + gemini-3.1-pro-preview, 2026-04-23)"
+      decision_date: "2026-04-23"
+      decision_by: "Magister (Matheus Fink)"
+
+  # PRED-GLY-010 DESTROYED — removed from pool
+  # Razão: AQP1/AQP9 não são posicionalmente redundantes com AQP4;
+  # clearance residual em AQP4 KO se explica muito melhor por
+  # difusão + bulk flow residual do que por aquaporina redundante.
+
+  # =========================================================================
+  # BLOCO 3 — Sleep / clearance quantitativo
+  # =========================================================================
+
+  - id: PRED-GLY-011
+    status: "invalidated-post-seal"
+    original_draft_id: PRED-GLY-011
+    claim: |
+      Slow-wave sleep (NREM N3) é a fase específica de máximo clearance
+      glinfático em humanos, com amplitude de oscilações delta-EEG
+      correlacionando com magnitude de CSF inflow medido por fMRI
+      sincronizado.
+    predicted_window: "2019-2022"
+    confidence: 0.72
+    anchors:
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Sleep or anesthesia mimicking slow-wave activity drives ~60% increase in interstitial space and clearance."
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Adrenergic tone suppression during sleep is associated with expanded interstitial volume."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Glymphatic clearance is substantially increased during sleep in mice."
+    falsification: |
+      Se estudo humano 2019-2022 demonstrar REM ou sleep fragmentado
+      genérico com clearance equivalente ou superior a NREM N3, REFUTED.
+    vectors: ["temporal_projection", "convergence_detection"]
+    category: "sleep_clearance"
+    novelty: "substantial"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 82
+    invalidated:
+      phase: "Phase 3.8 (2026-04-23)"
+      reason: "The prediction describes the exact methodology and findings of Fultz et al. 2019 Science — synchronized fMRI measurement of CSF inflow coupled with delta-EEG oscillations during NREM sleep in humans. This specific multimodal measurement setup was a landmark methodological contribution of 2019, not predictable from the pre-2018 anchors (Xie 2013 established sleep-glymphatic link in mice; Jessen 2015 review did not describe the human fMRI+EEG design). Classified as methodological leakage: the predicted experimental design matches the post-seal paper too precisely to be an a priori formulation."
+      detected_by: "gemini-3.1-pro-preview (primary) + gemini-2.5-pro (convergent, independent)"
+      pro31_verdict_raw: "LEAKED — The specific correlation between delta-EEG oscillations and CSF inflow measured by synchronized fMRI in humans perfectly describes the methodology and findings of the landmark 2019 paper by Fultz et al."
+      pro25_verdict_raw: "LEAKED — The claim describes the specific coupling of delta-EEG oscillations with CSF inflow measured by synchronized fMRI in sleeping humans, a landmark finding first demonstrated and published in 2019 (Fultz et al., Science)."
+      manual_adjudication: "TRUE POSITIVE — convergent flag by the two most capable audit models. Anchor papers (Xie 2013, Jessen 2015) do not describe the fMRI+EEG multimodal human design. The claim is a near-verbatim description of Fultz 2019 Science. Invalidated."
+      decision_date: "2026-04-23"
+      decision_by: "Magister (Matheus Fink)"
+      impact: "Removed from validity pool; original 4c verdict CONFIRMED (Fultz 2019 Science) remains in the record for traceability, but does not contribute to scoreboard metrics."
+      preserves: "Full original metadata retained; invalidation is a metadata overlay, not a deletion."
+
+  - id: PRED-GLY-012
+    status: "survived"
+    original_draft_id: PRED-GLY-012
+    claim: |
+      Obstructive sleep apnea (OSA) não-tratada reduz clearance glinfática
+      em humanos (medível por ALPS ou gadobutrol MRI) em magnitude
+      dose-dependente com AHI, e CPAP reverterá a disfunção em 3-6 meses.
+    predicted_window: "2020-2025"
+    confidence: 0.65
+    anchors:
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "Sleep drives glymphatic clearance; disruption reduces clearance."
+      - doi: "10.1007/s11604-017-0617-z"
+        year: 2017
+        excerpt: "ALPS index as non-invasive biomarker of glymphatic function."
+      - doi: "10.1523/JNEUROSCI.3246-14.2015"
+        year: 2015
+        excerpt: "Respiratory pressure modulates CSF movement."
+    falsification: |
+      Se estudos OSA 2020-2025 não encontrarem relação dose-resposta,
+      OU se CPAP não restaurar ALPS, REFUTED.
+    vectors: ["temporal_projection", "decomposition"]
+    category: "sleep_clearance"
+    novelty: "substantial"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 72
+
+  - id: PRED-GLY-013
+    status: "survived"
+    original_draft_id: PRED-GLY-013
+    claim: |
+      Expansão de volume intersticial durante o sono em humanos é
+      menor em magnitude que os ~60% reportados em camundongo
+      (projeção 15-30%), devido ao scaling de cérebro mas preservando
+      direção e correlação com slow-wave.
+    predicted_window: "2019-2024"
+    confidence: 0.60
+    anchors:
+      - doi: "10.1126/science.1241224"
+        year: 2013
+        excerpt: "60% expansion of interstitial space during sleep in mice."
+      - doi: "10.1093/brain/awx191"
+        year: 2017
+        excerpt: "Human intrathecal gadobutrol MRI enables glymphatic visualization."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Glymphatic function observed across rodent, primate, and preliminarily human brains."
+    falsification: |
+      Se medições humanas 2019-2024 mostrarem ≥50% ou <5% de expansão
+      volumétrica durante sono, REFUTED (ambos extremos).
+    vectors: ["scale_bridging", "cross_domain_isomorphism"]
+    category: "sleep_clearance"
+    novelty: "incremental"
+    anomalist_verdict: "SURVIVED"
+    anomalist_score: 73
+
+  # =========================================================================
+  # BLOCO 4 — Biomarkers / imaging
+  # =========================================================================
+
+  - id: PRED-GLY-014
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-014
+    claim: |
+      ALPS index correlacionará consistentemente com performance cognitiva
+      em coortes de idosos cognitivamente saudáveis, com r entre 0.2 e 0.5,
+      usando instrumentos sensíveis (ACE-III ou MoCA como primary endpoint;
+      MMSE evitado por ceiling effect). Reprodutibilidade multi-site/multi-vendor
+      é goal explícito, não achievement garantido dentro do window.
+    predicted_window: "2018-2022"
+    confidence: 0.72
+    anchors:
+      - doi: "10.1007/s11604-017-0617-z"
+        year: 2017
+        excerpt: "ALPS index proposed as non-invasive MRI biomarker of glymphatic function."
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "Glymphatic decline with aging is substantial and correlates with AQP4 loss."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Glymphatic dysfunction hypothesized as contributor to age-related cognitive decline."
+    falsification: |
+      Se meta-análise multi-site 2018-2022 mostrar r < 0.15 ou
+      heterogeneidade inter-centros inaceitável (I² > 80%), REFUTED.
+    vectors: ["temporal_projection", "convergence_detection"]
+    category: "imaging_biomarkers"
+    novelty: "incremental"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 68
+    reformulation_notes: |
+      r-range ampliado: 0.25-0.45 → 0.2-0.5.
+      Primary endpoint trocado: MMSE → ACE-III/MoCA (evita ceiling effect).
+      Multi-site como goal, não achievement garantido.
+      Confidence 0.72 mantido.
+
+  - id: PRED-GLY-015
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-015
+    claim: |
+      Enlarged perivascular spaces (EPVS) visíveis em T2/FLAIR MRI,
+      especificamente em centrum semiovale (região mais glinfático-específica
+      que basal ganglia), predizerão conversão de MCI para AD em coortes
+      longitudinais com hazard ratio ≥1.15 após ajuste por fatores vasculares.
+      EPVS é interpretado como readout parcial glinfático (interpretação,
+      não fato estabelecido).
+    predicted_window: "2019-2024"
+    confidence: 0.65
+    anchors:
+      - doi: "10.1111/ene.12979"
+        year: 2016
+        excerpt: "Hypertension and aging associated with enlarged Virchow-Robin spaces."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Perivascular space pathology linked to glymphatic dysfunction."
+      - doi: "10.1002/ana.24271"
+        year: 2014
+        excerpt: "Age-related glymphatic decline associated with AQP4 loss."
+    falsification: |
+      Se estudos longitudinais MCI→AD 2019-2024 mostrarem EPVS em centrum
+      semiovale apenas como covariável vascular sem efeito independente
+      (HR < 1.1 ajustado), REFUTED.
+    vectors: ["convergence_detection", "temporal_projection"]
+    category: "imaging_biomarkers"
+    novelty: "incremental"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 62
+    reformulation_notes: |
+      HR ≥1.3 → HR ≥1.15 (valor mais realista em análises ajustadas).
+      Especificação anatômica: centrum semiovale (CSO) vs basal ganglia.
+      "Readout glinfático" enquadrado como interpretação, não fato.
+
+  - id: PRED-GLY-016
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-016
+    claim: |
+      Uma técnica MRI non-contrast livre de gadolinio (baseada primariamente
+      em diffusion com super-b-values, IVIM ou phase-contrast — ASL removido
+      por não ser mecanicamente apropriado) obterá aceitação de consenso
+      multi-site para quantificar clearance perivascular em humanos.
+      Alternativa: ALPS pode se consolidar como padrão (sem refutar a
+      essência da predição).
+    predicted_window: "2020-2025"
+    confidence: 0.50
+    anchors:
+      - doi: "10.1007/s11604-017-0617-z"
+        year: 2017
+        excerpt: "ALPS index represents early attempt at non-invasive glymphatic imaging."
+      - doi: "10.1093/brain/awx191"
+        year: 2017
+        excerpt: "Intrathecal gadobutrol MRI — invasive but gold standard for human glymphatic."
+      - doi: "10.1523/JNEUROSCI.3246-14.2015"
+        year: 2015
+        excerpt: "Respiratory- and cardiac-gated MRI captures CSF pulsatility."
+    falsification: |
+      Se até 2025 nenhuma técnica non-gadolinium multi-site com consenso
+      for aceita no campo, E ALPS for também abandonada/invalidada, REFUTED.
+    vectors: ["temporal_projection", "constraint_removal"]
+    category: "imaging_biomarkers"
+    novelty: "substantial"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 55
+    reformulation_notes: |
+      ASL removido (não é mecanicamente apropriado para clearance).
+      Threshold quantitativo ICC ≥0.75 → "aceitação de consenso multi-site".
+      ALPS como alternativa válida (não refutadora da essência).
+      Confidence 0.55 → 0.50.
+
+  # =========================================================================
+  # BLOCO 5 — Moonshots
+  # =========================================================================
+
+  - id: PRED-GLY-017
+    status: "wounded-reformulated"
+    original_draft_id: PRED-GLY-017
+    claim: |
+      Estimulação pró-linfangiogênica (VEGF-C ou similar) de lymphatics
+      meníngeos em modelos murinos de AD ou aging produzirá redução
+      estatisticamente significativa de acúmulo de Aβ, estabelecendo
+      meningeal lymphatic regeneration como eixo terapêutico complementar
+      (não independente) a vias já conhecidas. Caveat: side effects de
+      VEGF-C (neoangiogenese patológica, alteração imune) podem confundir
+      atribuição mecanística.
+    predicted_window: "2018-2022"
+    confidence: 0.45
+    anchors:
+      - doi: "10.1038/nature14432"
+        year: 2015
+        excerpt: "Functional lymphatic vessels in dura mater drain to deep cervical lymph nodes."
+      - doi: "10.1084/jem.20142290"
+        year: 2015
+        excerpt: "Meningeal lymphatic vessels express VEGFR3, PROX1, podoplanin, LYVE-1."
+      - doi: "10.1038/nrneurol.2015.119"
+        year: 2015
+        excerpt: "Meningeal lymphatics involved in CSF drainage and immune surveillance."
+    falsification: |
+      Se experiments VEGF-C em AD/aging models 2018-2022 falharem em
+      atenuar patologia Aβ em magnitude significativa (p<0.05), OU apenas
+      modularem imunidade sem efeito em clearance, REFUTED.
+    vectors: ["constraint_removal", "cross_domain_isomorphism"]
+    category: "moonshot"
+    novelty: "high"
+    anomalist_verdict: "WOUNDED-REFORMULATED"
+    anomalist_score: 60
+    reformulation_notes: |
+      Threshold ≥30% Aβ reduction → "redução estatisticamente significativa".
+      "Eixo terapêutico independente" → "eixo terapêutico complementar".
+      Caveat sobre side effects (neoangiogenese, imune) adicionado.
+      Confidence 0.45 mantido (moonshot).
+
+  # PRED-GLY-018 DESTROYED — removed from pool
+  # Razão: Predição não-falsificável por falta de especificidade.
+  # "Kinase astrocítica ou canal iônico" poderia ser qualquer coisa;
+  # descoberta de ALGUM regulador em 6 anos é praticamente garantida.
+
+# =========================================================================
+# Meta
+# =========================================================================
+
+metadata:
+  total_predictions: 16
+  survived_intact: 6
+  reformulated: 10
+  destroyed_removed: 2
+  destroyed_ids: ["PRED-GLY-010", "PRED-GLY-018"]
+
+  by_category:
+    parkinsons_glymphatic: 6
+    aqp4_controversy: 3   # was 4, minus PRED-GLY-010
+    sleep_clearance: 3
+    imaging_biomarkers: 3
+    moonshot: 1           # was 2, minus PRED-GLY-018
+
+  by_confidence:
+    high_0.70_plus: 3     # PRED-003, 011, 014
+    moderate_0.55_to_0.69: 8
+    low_0.30_to_0.54: 5
+
+  by_anomalist_verdict:
+    survived: 6
+    wounded_reformulated: 10
+
+  survived_ids: ["PRED-GLY-003", "PRED-GLY-007", "PRED-GLY-009", "PRED-GLY-011", "PRED-GLY-012", "PRED-GLY-013"]
+  reformulated_ids: ["PRED-GLY-001", "PRED-GLY-002", "PRED-GLY-004", "PRED-GLY-005", "PRED-GLY-006", "PRED-GLY-008", "PRED-GLY-014", "PRED-GLY-015", "PRED-GLY-016", "PRED-GLY-017"]
+
+notes: |
+  Hash-sealing aplicado a este arquivo em Phase 3c (seal-manifest.yaml).
+  Todas as 16 predições ancoradas exclusivamente em literatura L1 ≤2017-12-31.
+  Nenhuma literatura >2017 foi consultada durante geração ou reformulação.
+  Reformulações de feridas aplicaram sugestões do Anomalist Pass (Phase 3b),
+  preservando substância direcional e relaxando thresholds otimistas.
+
+  Próxima phase: Phase 4 (Validation Against 2017-2026 Literature).

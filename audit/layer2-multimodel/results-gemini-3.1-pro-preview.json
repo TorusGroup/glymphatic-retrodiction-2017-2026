@@ -1,0 +1,139 @@
+{
+  "model": "gemini-3.1-pro-preview",
+  "total": 16,
+  "clean": 15,
+  "suspect": 0,
+  "leaked": 1,
+  "unparsed": 0,
+  "leakage_rate_pct": 6.25,
+  "results": [
+    {
+      "id": "PRED-GLY-001",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically extrapolates the pre-2018 established mechanism of AQP4-dependent glymphatic clearance of amyloid-beta to alpha-synuclein without utilizing any post-2017 terminology, concepts, or tools.",
+      "elapsed_s": 12.55,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically extrapolates the pre-2018 established mechanism of AQP4-dependent glymphatic clearance of amyloid-beta to alpha-synuclein without utilizing any post-2017 terminology, concepts, or tools."
+    },
+    {
+      "id": "PRED-GLY-002",
+      "verdict": "CLEAN",
+      "reason": "The prediction relies entirely on concepts (the glymphatic system, α-synuclein preformed fibrils) and imaging techniques that were well-established by 2017, logically extrapolating the temporal precedence of clearance dysfunction already observed in AD models to PD models.",
+      "elapsed_s": 13.21,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction relies entirely on concepts (the glymphatic system, α-synuclein preformed fibrils) and imaging techniques that were well-established by 2017, logically extrapolating the temporal precedence of clearance dysfunction already observed in AD models to PD models."
+    },
+    {
+      "id": "PRED-GLY-003",
+      "verdict": "CLEAN",
+      "reason": "The ALPS index was introduced in 2017, making its proposed application to Parkinson's disease and correlation with UPDRS a temporally consistent extrapolation using strictly pre-2018 terminology and concepts.",
+      "elapsed_s": 11.26,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The ALPS index was introduced in 2017, making its proposed application to Parkinson's disease and correlation with UPDRS a temporally consistent extrapolation using strictly pre-2018 terminology and concepts."
+    },
+    {
+      "id": "PRED-GLY-004",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically integrates pre-2018 knowledge, specifically the 2017 introduction of the DTI-ALPS index, established EPVS markers, and the known role of sleep in glymphatic clearance, to hypothesize about RBD and Parkinson's disease.",
+      "elapsed_s": 14.03,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically integrates pre-2018 knowledge, specifically the 2017 introduction of the DTI-ALPS index, established EPVS markers, and the known role of sleep in glymphatic clearance, to hypothesize about RBD and Parkinson's disease."
+    },
+    {
+      "id": "PRED-GLY-005",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically synthesizes pre-2018 concepts, specifically the 2015 discovery of dural lymphatics and the established Braak hypothesis, to forecast the relative quantitative contribution of the cribriform clearance route without using any post-2017 terminology.",
+      "elapsed_s": 29.96,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically synthesizes pre-2018 concepts, specifically the 2015 discovery of dural lymphatics and the established Braak hypothesis, to forecast the relative quantitative contribution of the cribriform clearance route without using any post-2017 terminology."
+    },
+    {
+      "id": "PRED-GLY-006",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically extrapolates pre-2018 findings on AQP4-mediated glymphatic clearance of amyloid and tau to alpha-synuclein, while explicitly acknowledging the contemporary lack of validated in vivo AQP4 agonists as a constraint.",
+      "elapsed_s": 15.11,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically extrapolates pre-2018 findings on AQP4-mediated glymphatic clearance of amyloid and tau to alpha-synuclein, while explicitly acknowledging the contemporary lack of validated in vivo AQP4 agonists as a constraint."
+    },
+    {
+      "id": "PRED-GLY-007",
+      "verdict": "CLEAN",
+      "reason": "The prediction relies entirely on pre-2018 literature (Iliff 2012 and Smith 2017) and standard genetic background concepts to formulate a testable hypothesis explaining a known discrepancy.",
+      "elapsed_s": 27.47,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction relies entirely on pre-2018 literature (Iliff 2012 and Smith 2017) and standard genetic background concepts to formulate a testable hypothesis explaining a known discrepancy."
+    },
+    {
+      "id": "PRED-GLY-008",
+      "verdict": "CLEAN",
+      "reason": "The prediction accurately reflects the state of the glymphatic system controversy as of 2017, explicitly referencing the Smith 2017 paper that challenged AQP4's role, and proposes a logical future experiment without using any post-2017 concepts or findings.",
+      "elapsed_s": 11.84,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction accurately reflects the state of the glymphatic system controversy as of 2017, explicitly referencing the Smith 2017 paper that challenged AQP4's role, and proposes a logical future experiment without using any post-2017 concepts or findings."
+    },
+    {
+      "id": "PRED-GLY-009",
+      "verdict": "CLEAN",
+      "reason": "The prediction relies on pre-2018 concepts (the debate between Iliff's bulk flow and Smith's diffusion, and early models of oscillatory dispersion) to make a plausible forward-looking claim about whole-brain modeling and perivascular velocities without using post-2017 terminology.",
+      "elapsed_s": 25.09,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction relies on pre-2018 concepts (the debate between Iliff's bulk flow and Smith's diffusion, and early models of oscillatory dispersion) to make a plausible forward-looking claim about whole-brain modeling and perivascular velocities without using post-2017 terminology."
+    },
+    {
+      "id": "PRED-GLY-011",
+      "verdict": "LEAKED",
+      "reason": "The specific correlation between delta-EEG oscillations and CSF inflow measured by synchronized fMRI in humans perfectly describes the methodology and findings of the landmark 2019 paper by Fultz et al.",
+      "elapsed_s": 8.29,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The specific correlation between delta-EEG oscillations and CSF inflow measured by synchronized fMRI in humans perfectly describes the methodology and findings of the landmark 2019 paper by Fultz et al."
+    },
+    {
+      "id": "PRED-GLY-012",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically combines the 2013 discovery of sleep-driven glymphatic clearance with human imaging techniques (DTI-ALPS and gadobutrol MRI) that were both introduced in 2017, containing no post-2017 concepts.",
+      "elapsed_s": 12.86,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically combines the 2013 discovery of sleep-driven glymphatic clearance with human imaging techniques (DTI-ALPS and gadobutrol MRI) that were both introduced in 2017, containing no post-2017 concepts."
+    },
+    {
+      "id": "PRED-GLY-013",
+      "verdict": "CLEAN",
+      "reason": "The prediction relies entirely on the foundational 2013 discovery of 60% interstitial expansion in mice during slow-wave sleep and logically extrapolates a scaled-down hypothesis for humans without referencing post-2017 data or methodologies.",
+      "elapsed_s": 14.65,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction relies entirely on the foundational 2013 discovery of 60% interstitial expansion in mice during slow-wave sleep and logically extrapolates a scaled-down hypothesis for humans without referencing post-2017 data or methodologies."
+    },
+    {
+      "id": "PRED-GLY-014",
+      "verdict": "CLEAN",
+      "reason": "The prediction relies entirely on the ALPS index introduced by Taoka et al. in 2017 and standard pre-2018 cognitive assessments (MoCA, ACE-III, MMSE) to formulate a valid forward-looking hypothesis.",
+      "elapsed_s": 12.85,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction relies entirely on the ALPS index introduced by Taoka et al. in 2017 and standard pre-2018 cognitive assessments (MoCA, ACE-III, MMSE) to formulate a valid forward-looking hypothesis."
+    },
+    {
+      "id": "PRED-GLY-015",
+      "verdict": "CLEAN",
+      "reason": "The distinction between centrum semiovale and basal ganglia EPVS, as well as the hypothesis linking centrum semiovale EPVS to glymphatic clearance dysfunction and amyloid pathology, were well established in the neuroimaging literature prior to 2018.",
+      "elapsed_s": 17.9,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The distinction between centrum semiovale and basal ganglia EPVS, as well as the hypothesis linking centrum semiovale EPVS to glymphatic clearance dysfunction and amyloid pathology, were well established in the neuroimaging literature prior to 2018."
+    },
+    {
+      "id": "PRED-GLY-016",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically builds upon the DTI-ALPS method and the limitations of intrathecal gadolinium, both of which were established in the provided 2017 literature, without relying on post-2017 concepts.",
+      "elapsed_s": 12.73,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically builds upon the DTI-ALPS method and the limitations of intrathecal gadolinium, both of which were established in the provided 2017 literature, without relying on post-2017 concepts."
+    },
+    {
+      "id": "PRED-GLY-017",
+      "verdict": "CLEAN",
+      "reason": "The prediction logically combines the 2015 discovery of meningeal lymphatics and their role in clearance with the long-established function of VEGF-C in lymphangiogenesis, using entirely pre-2018 concepts to hypothesize a therapeutic intervention for Alzheimer's disease.",
+      "elapsed_s": 14.57,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction logically combines the 2015 discovery of meningeal lymphatics and their role in clearance with the long-established function of VEGF-C in lymphangiogenesis, using entirely pre-2018 concepts to hypothesize a therapeutic intervention for Alzheimer's disease."
+    }
+  ]
+}

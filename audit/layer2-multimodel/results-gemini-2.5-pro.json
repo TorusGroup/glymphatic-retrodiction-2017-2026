@@ -1,0 +1,139 @@
+{
+  "model": "gemini-2.5-pro",
+  "total": 16,
+  "clean": 12,
+  "suspect": 0,
+  "leaked": 4,
+  "unparsed": 0,
+  "leakage_rate_pct": 25.0,
+  "results": [
+    {
+      "id": "PRED-GLY-001",
+      "verdict": "CLEAN",
+      "reason": "The prediction applies the known glymphatic clearance mechanism for amyloid-β and tau (established in the cited 2012-2014 papers) to α-synuclein, a logical and testable hypothesis using only concepts and terminology well-established before 2018.",
+      "elapsed_s": 22.79,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction applies the known glymphatic clearance mechanism for amyloid-β and tau (established in the cited 2012-2014 papers) to α-synuclein, a logical and testable hypothesis using only concepts and terminology well-established before 2018."
+    },
+    {
+      "id": "PRED-GLY-002",
+      "verdict": "CLEAN",
+      "reason": "The prediction's core concepts—the glymphatic system, its impairment in Alzheimer's models, and the use of α-synuclein PFF or overexpression models for Parkinson's—were all well-established in the literature by the end of 2017.",
+      "elapsed_s": 22.62,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction's core concepts—the glymphatic system, its impairment in Alzheimer's models, and the use of α-synuclein PFF or overexpression models for Parkinson's—were all well-established in the literature by the end of 2017."
+    },
+    {
+      "id": "PRED-GLY-003",
+      "verdict": "CLEAN",
+      "reason": "The core concept, the \"ALPS index\", was introduced in a cited 2017 paper (DOI: 10.1093/brain/awx191), and the prediction correctly projects its application to Parkinson's disease, a topic not covered in the original paper but a logical extension of pre-2018 knowledge on glymphatic dysfunction.",
+      "elapsed_s": 18.84,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The core concept, the \"ALPS index\", was introduced in a cited 2017 paper (DOI: 10.1093/brain/awx191), and the prediction correctly projects its application to Parkinson's disease, a topic not covered in the original paper but a logical extension of pre-2018 knowledge on glymphatic dysfunction."
+    },
+    {
+      "id": "PRED-GLY-004",
+      "verdict": "CLEAN",
+      "reason": "All concepts, including the glymphatic system, RBD as a prodrome for synucleinopathies, enlarged perivascular spaces (EPVS), and the specific \"ALPS index\" metric, were established in literature published before the 2017-12-31 cutoff.",
+      "elapsed_s": 17.51,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, including the glymphatic system, RBD as a prodrome for synucleinopathies, enlarged perivascular spaces (EPVS), and the specific \"ALPS index\" metric, were established in literature published before the 2017-12-31 cutoff."
+    },
+    {
+      "id": "PRED-GLY-005",
+      "verdict": "CLEAN",
+      "reason": "The prediction is based on the synthesis of concepts well-established by 2017, namely the Braak hypothesis for synucleinopathy, and the roles of the cribriform plate and newly discovered dural lymphatics in brain clearance, all supported by the cited pre-2018 literature.",
+      "elapsed_s": 17.69,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction is based on the synthesis of concepts well-established by 2017, namely the Braak hypothesis for synucleinopathy, and the roles of the cribriform plate and newly discovered dural lymphatics in brain clearance, all supported by the cited pre-2018 literature."
+    },
+    {
+      "id": "PRED-GLY-006",
+      "verdict": "CLEAN",
+      "reason": "The prediction is a logical synthesis of the cited 2013-2014 papers, which established the glymphatic system's role, the concept of AQP4 depolarization in neurodegeneration, and the link between impaired glymphatic function and alpha-synucleinopathy.",
+      "elapsed_s": 19.19,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction is a logical synthesis of the cited 2013-2014 papers, which established the glymphatic system's role, the concept of AQP4 depolarization in neurodegeneration, and the link between impaired glymphatic function and alpha-synucleinopathy."
+    },
+    {
+      "id": "PRED-GLY-007",
+      "verdict": "LEAKED",
+      "reason": "The specific hypothesis that mouse strain-dependent differences in astrocyte endfoot integrity (C57BL/6 vs CD1/FVB) explain the conflicting results of Iliff 2012 and Smith 2017 was the central finding of a paper published in late 2018 (Mestre et al., Nature Communications).",
+      "elapsed_s": 25.44,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The specific hypothesis that mouse strain-dependent differences in astrocyte endfoot integrity (C57BL/6 vs CD1/FVB) explain the conflicting results of Iliff 2012 and Smith 2017 was the central finding of a paper published in late 2018 (Mestre et al., Nature Communications)."
+    },
+    {
+      "id": "PRED-GLY-008",
+      "verdict": "CLEAN",
+      "reason": "The central debate regarding AQP4's structural role (maintaining endfoot integrity) versus its water channel function in the glymphatic system, as well as the specific citation of the critical Smith 2017 model which marginalized AQP4's role, were all established topics in the literature by the end of 2017.",
+      "elapsed_s": 21.49,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The central debate regarding AQP4's structural role (maintaining endfoot integrity) versus its water channel function in the glymphatic system, as well as the specific citation of the critical Smith 2017 model which marginalized AQP4's role, were all established topics in the literature by the end of 2017."
+    },
+    {
+      "id": "PRED-GLY-009",
+      "verdict": "CLEAN",
+      "reason": "The prediction frames the central glymphatic controversy as the \"Iliff-Smith debate\" (bulk flow vs. diffusion) and proposes a resolution via \"oscillatory dispersion,\" a mechanism that was a prominent topic in computational modeling studies of the perivascular space published between 2015 and 2017.",
+      "elapsed_s": 25.36,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction frames the central glymphatic controversy as the \"Iliff-Smith debate\" (bulk flow vs. diffusion) and proposes a resolution via \"oscillatory dispersion,\" a mechanism that was a prominent topic in computational modeling studies of the perivascular space published between 2015 and 2017."
+    },
+    {
+      "id": "PRED-GLY-011",
+      "verdict": "LEAKED",
+      "reason": "The claim describes the specific coupling of delta-EEG oscillations with CSF inflow measured by synchronized fMRI in sleeping humans, a landmark finding first demonstrated and published in 2019 (Fultz et al., Science).",
+      "elapsed_s": 19.12,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The claim describes the specific coupling of delta-EEG oscillations with CSF inflow measured by synchronized fMRI in sleeping humans, a landmark finding first demonstrated and published in 2019 (Fultz et al., Science)."
+    },
+    {
+      "id": "PRED-GLY-012",
+      "verdict": "LEAKED",
+      "reason": "The prediction explicitly mentions measuring glymphatic clearance using the \"ALPS\" method, but the DTI-ALPS index was first described in a paper by Taoka et al. published in late 2018, after the 2017-12-31 knowledge cutoff.",
+      "elapsed_s": 18.49,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The prediction explicitly mentions measuring glymphatic clearance using the \"ALPS\" method, but the DTI-ALPS index was first described in a paper by Taoka et al. published in late 2018, after the 2017-12-31 knowledge cutoff."
+    },
+    {
+      "id": "PRED-GLY-013",
+      "verdict": "CLEAN",
+      "reason": "The prediction's core claim of ~60% interstitial volume expansion in mice is based on the cited 2013 paper, and its extrapolation to a lower percentage in humans via \"brain scaling\" is a logical, a priori hypothesis that does not require any post-2017 knowledge.",
+      "elapsed_s": 21.26,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction's core claim of ~60% interstitial volume expansion in mice is based on the cited 2013 paper, and its extrapolation to a lower percentage in humans via \"brain scaling\" is a logical, a priori hypothesis that does not require any post-2017 knowledge."
+    },
+    {
+      "id": "PRED-GLY-014",
+      "verdict": "LEAKED",
+      "reason": "The term \"ALPS index\" was formally proposed and named in a 2019 publication by Yokota et al., making its use in a prediction supposedly based on pre-2018 knowledge a clear temporal leak.",
+      "elapsed_s": 15.58,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The term \"ALPS index\" was formally proposed and named in a 2019 publication by Yokota et al., making its use in a prediction supposedly based on pre-2018 knowledge a clear temporal leak."
+    },
+    {
+      "id": "PRED-GLY-015",
+      "verdict": "CLEAN",
+      "reason": "All core concepts, including the glymphatic hypothesis, the role of EPVS in the centrum semiovale, and its distinction from basal ganglia EPVS as a marker for cognitive decline, were established in the literature before 2018, as supported by the cited anchors.",
+      "elapsed_s": 19.64,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All core concepts, including the glymphatic hypothesis, the role of EPVS in the centrum semiovale, and its distinction from basal ganglia EPVS as a marker for cognitive decline, were established in the literature before 2018, as supported by the cited anchors."
+    },
+    {
+      "id": "PRED-GLY-016",
+      "verdict": "CLEAN",
+      "reason": "All mentioned techniques, including the specific ALPS method, were introduced in the scientific literature on or before the cutoff date of December 31, 2017.",
+      "elapsed_s": 16.69,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All mentioned techniques, including the specific ALPS method, were introduced in the scientific literature on or before the cutoff date of December 31, 2017."
+    },
+    {
+      "id": "PRED-GLY-017",
+      "verdict": "CLEAN",
+      "reason": "The prediction is a direct, logical extrapolation from the cited 2015 landmark papers that discovered meningeal lymphatics, combined with the well-established pre-2018 knowledge of VEGF-C's role in promoting lymphatic vessel growth.",
+      "elapsed_s": 20.85,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction is a direct, logical extrapolation from the cited 2015 landmark papers that discovered meningeal lymphatics, combined with the well-established pre-2018 knowledge of VEGF-C's role in promoting lymphatic vessel growth."
+    }
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "model": "gemini-2.5-flash",
+  "total": 16,
+  "clean": 12,
+  "suspect": 0,
+  "leaked": 4,
+  "unparsed": 0,
+  "leakage_rate_pct": 25.0,
+  "results": [
+    {
+      "id": "PRED-GLY-001",
+      "verdict": "CLEAN",
+      "reason": "The prediction and falsification criteria use concepts and terminology, such as the glymphatic pathway, AQP4's",
+      "elapsed_s": 4.9,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction and falsification criteria use concepts and terminology, such as the glymphatic pathway, AQP4's"
+    },
+    {
+      "id": "PRED-GLY-002",
+      "verdict": "CLEAN",
+      "reason": "The prediction's core concepts, including the glymphatic system, its dysfunction in neurodegenerative diseases, and",
+      "elapsed_s": 4.42,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction's core concepts, including the glymphatic system, its dysfunction in neurodegenerative diseases, and"
+    },
+    {
+      "id": "PRED-GLY-003",
+      "verdict": "LEAKED",
+      "reason": "The \"ALPS index\" and its associated methodology were first introduced and published in 2018",
+      "elapsed_s": 4.25,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The \"ALPS index\" and its associated methodology were first introduced and published in 2018"
+    },
+    {
+      "id": "PRED-GLY-004",
+      "verdict": "LEAKED",
+      "reason": "The prediction explicitly mentions \"ALPS reduzido\" (reduced ALPS), where the ALPS index",
+      "elapsed_s": 4.76,
+      "error": null,
+      "raw": "VERDICT: LEAKED\nREASON: The prediction explicitly mentions \"ALPS reduzido\" (reduced ALPS), where the ALPS index"
+    },
+    {
+      "id": "PRED-GLY-005",
+      "verdict": "CLEAN",
+      "reason": "All concepts, including glymphatic clearance, olfactory/cribriform pathways for alpha-synuclein",
+      "elapsed_s": 4.67,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, including glymphatic clearance, olfactory/cribriform pathways for alpha-synuclein"
+    },
+    {
+      "id": "PRED-GLY-006",
+      "verdict": "CLEAN",
+      "reason": "All concepts, terminology, and mechanisms described in the prediction, including AQP4 polarization, alpha-synuclein pathology",
+      "elapsed_s": 4.85,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, terminology, and mechanisms described in the prediction, including AQP4 polarization, alpha-synuclein pathology"
+    },
+    {
+      "id": "PRED-GLY-007",
+      "verdict": "CLEAN",
+      "reason": "All concepts, terminology, and cited studies, including the corrected Smith reference, are established prior to the 201",
+      "elapsed_s": 4.76,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, terminology, and cited studies, including the corrected Smith reference, are established prior to the 201"
+    },
+    {
+      "id": "PRED-GLY-008",
+      "verdict": "CLEAN",
+      "reason": "All concepts, terminology, and the specific \"Smith 2017\" reference (likely referring to Smith",
+      "elapsed_s": 4.64,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, terminology, and the specific \"Smith 2017\" reference (likely referring to Smith"
+    },
+    {
+      "id": "PRED-GLY-009",
+      "verdict": "LEAKED",
+      "reason": "LEAKED REASON: The term \"debate Iliff-Smith\" as a widely recognized named debate specifically contrasting bulk flow versus diffusion/dispersion mechanisms",
+      "elapsed_s": 4.86,
+      "error": null,
+      "raw": "LEAKED\nREASON: The term \"debate Iliff-Smith\" as a widely recognized named debate specifically contrasting bulk flow versus diffusion/dispersion mechanisms"
+    },
+    {
+      "id": "PRED-GLY-011",
+      "verdict": "CLEAN",
+      "reason": "All concepts, including glymphatic clearance, its link to slow-wave sleep (NREM N3), and the",
+      "elapsed_s": 5.15,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, including glymphatic clearance, its link to slow-wave sleep (NREM N3), and the"
+    },
+    {
+      "id": "PRED-GLY-012",
+      "verdict": "CLEAN",
+      "reason": "All concepts, including the glymphatic system, its measurement in humans via ALPS or gadobutrol MRI,",
+      "elapsed_s": 4.89,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, including the glymphatic system, its measurement in humans via ALPS or gadobutrol MRI,"
+    },
+    {
+      "id": "PRED-GLY-013",
+      "verdict": "CLEAN",
+      "reason": "The prediction's core concepts of glymphatic system function, sleep-dependent interstitial volume changes, and brain",
+      "elapsed_s": 4.69,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction's core concepts of glymphatic system function, sleep-dependent interstitial volume changes, and brain"
+    },
+    {
+      "id": "PRED-GLY-014",
+      "verdict": "CLEAN",
+      "reason": "All concepts, tools (ALPS index, ACE-III, MoCA, MMSE), and statistical terms mentioned were",
+      "elapsed_s": 4.65,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All concepts, tools (ALPS index, ACE-III, MoCA, MMSE), and statistical terms mentioned were"
+    },
+    {
+      "id": "PRED-GLY-015",
+      "verdict": "CLEAN",
+      "reason": "All key concepts, including enlarged perivascular spaces (EPVS) as a partial glymphatic readout",
+      "elapsed_s": 4.45,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: All key concepts, including enlarged perivascular spaces (EPVS) as a partial glymphatic readout"
+    },
+    {
+      "id": "PRED-GLY-016",
+      "verdict": "LEAKED",
+      "reason": "LEAKED REASON: The prediction explicitly mentions the \"ALPS\" index, which was first introduced and published in 2017 but",
+      "elapsed_s": 4.67,
+      "error": null,
+      "raw": "LEAKED\nREASON: The prediction explicitly mentions the \"ALPS\" index, which was first introduced and published in 2017 but"
+    },
+    {
+      "id": "PRED-GLY-017",
+      "verdict": "CLEAN",
+      "reason": "The prediction's core concepts, including meningeal lymphatics, their role in Aβ clearance, and VEGF-",
+      "elapsed_s": 5.1,
+      "error": null,
+      "raw": "VERDICT: CLEAN\nREASON: The prediction's core concepts, including meningeal lymphatics, their role in Aβ clearance, and VEGF-"
+    }
+  ]
+}

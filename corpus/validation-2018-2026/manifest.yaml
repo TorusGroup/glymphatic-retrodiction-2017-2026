@@ -1,0 +1,239 @@
+# Validation Corpus Manifest — exp-retrodiction Phase 4b
+# Glymphatic literature validation window 2018-01-01 to 2026-04-23
+# Generated: 2026-04-23T12:50:18.162Z
+#
+# This corpus is the counterpart to the sealed Phase 2 corpus ≤2017.
+# It is used to test the 16 hash-sealed predictions from Phase 3.
+
+manifest_version: "1.0"
+corpus_name: "glymphatic-validation-2018-2026"
+temporal_window:
+  start: "2018-01-01"
+  end: "2026-04-23"
+build_date: "2026-04-23T12:50:18.162Z"
+
+# Corpus size
+total_papers: 3329
+preprint_count: 6
+peer_reviewed_count: 3192
+
+# Cryptographic seal
+hash_algorithm: "SHA-256"
+hash_corpus: "3aa15c2c2fd8af4291374671bf6d64a63cd0ca246ab0414967a6a3c8199be5df"
+hash_sealed_at: "2026-04-23T12:50:18.162Z"
+
+# Cross-reference to sealed predictions (Phase 3)
+sealed_predictions:
+  hash_predictions: "b9add8effaaf3aaa7de5a82b6e42bb5ba2fde19be635ac6a65c28c24fe55cc73"
+  commit_seal: "17501bc1"
+  sealed_count: 16
+
+# Cross-reference to Phase 2 corpus (≤2017)
+baseline_corpus:
+  name: "glymphatic-literature-2017"
+  hash: "d4f52383c20a98bab610d40716c0e5767c60c34153c2e6e6c642c48b64e4849b"
+  total_papers: 563
+
+# Sources
+sources:
+  pubmed:
+    count: 3192
+    access: "E-utilities esearch + efetch, no API key"
+  europepmc_preprint:
+    count: 0
+    access: "Europe PMC REST, SRC:PPR filter"
+  arxiv:
+    count: 6
+    access: "arXiv Atom API"
+
+# Queries executed (mirror Phase 2 methodology + post-2018 specific)
+queries_pubmed:
+  - name: "glymphatic-main-2018-2026"
+    notes: "Core glymphatic terms"
+  - name: "csf-isf-brain-clearance-2018-2026"
+  - name: "sleep-brain-clearance-2018-2026"
+  - name: "amyloid-clearance-glymphatic-2018-2026"
+    notes: "Amyloid + tau clearance"
+  - name: "aqp4-glymphatic-2018-2026"
+    notes: "AQP4 anchored to glymphatic context"
+  - name: "meningeal-lymphatic-2018-2026"
+    notes: "Includes basal meningeal lymphatic (discovered 2022)"
+  - name: "imaging-glymphatic-2018-2026"
+    notes: "Added DTI-ALPS keyword (emerging post-2017)"
+  - name: "aging-glymphatic-2018-2026"
+  - name: "stroke-tbi-glymphatic-2018-2026"
+  - name: "alzheimers-glymphatic-2018-2026"
+  - name: "parkinsons-glymphatic-2018-2026"
+  - name: "perivascular-space-clinical-2018-2026"
+  - name: "lymphatic-cns-2018-2026"
+  - name: "drug-delivery-glymphatic-2018-2026"
+  - name: "anesthesia-glymphatic-2018-2026"
+
+queries_europepmc:
+  - name: "glymphatic-preprints-2018-2026"
+  - name: "brain-clearance-preprints-2018-2026"
+  - name: "meningeal-lymphatic-preprints-2018-2026"
+  - name: "aqp4-glymphatic-preprints-2018-2026"
+  - name: "sleep-glymphatic-preprints-2018-2026"
+  - name: "imaging-glymphatic-preprints-2018-2026"
+  - name: "alzheimer-glymphatic-preprints-2018-2026"
+
+queries_arxiv:
+  - name: "all:glymphatic"
+  - name: "all:paravascular AND all:brain"
+  - name: "all:'brain clearance'"
+  - name: "all:'CSF flow' AND q-bio"
+  - name: "all:'perivascular space' AND q-bio"
+  - name: "all:'perivascular space' AND eess.IV"
+  - name: "all:DTI-ALPS"
+  - name: "all:'meningeal lymphatic'"
+
+# Filters applied
+filters:
+  temporal:
+    rule: "2018-01-01 <= publication_date <= 2026-04-23"
+  language:
+    accepted: ["eng", "english", "en"]
+  publication_types_rejected:
+    - "retraction"
+    - "editorial"
+    - "comment"
+    - "letter"
+    - "news"
+    - "historical article"
+    - "biography"
+  abstract_minimum_length: 50
+  relevance_score_threshold: 3
+  relevance_scoring:
+    keyword_density_max: 3
+    founder_author_bonus: 2
+    title_keyword_bonus: 2
+    peer_reviewed_bonus: 1
+    mesh_alignment_bonus: 1
+
+# Deduplication
+deduplication:
+  strategy: "DOI primary, PMID secondary, title-canonical tertiary"
+  preprint_vs_published: "peer-reviewed version retained when dup exists"
+  deduplicated_count: 191
+
+# Exclusion summary
+total_raw_fetched: 6270
+total_excluded: 2941
+inclusion_rate: 53.09%
+
+# Diversity stats
+papers_per_year:
+  "2017": 1
+  "2018": 122
+  "2019": 180
+  "2020": 246
+  "2021": 282
+  "2022": 342
+  "2023": 389
+  "2024": 536
+  "2025": 820
+  "2026": 405
+  "null": 6
+
+top_journals:
+  - name: "Fluids and barriers of the CNS"
+    count: 98
+  - name: "Scientific reports"
+    count: 67
+  - name: "Frontiers in aging neuroscience"
+    count: 66
+  - name: "bioRxiv"
+    count: 62
+  - name: "Frontiers in neurology"
+    count: 58
+  - name: "Journal of cerebral blood flow and metabolism : official journal of the International Society of Cerebral Blood Flow and Metabolism"
+    count: 54
+  - name: "Frontiers in neuroscience"
+    count: 52
+  - name: "NeuroImage"
+    count: 48
+  - name: "Research Square"
+    count: 48
+  - name: "International journal of molecular sciences"
+    count: 45
+  - name: "AJNR. American journal of neuroradiology"
+    count: 37
+  - name: "bioRxiv : the preprint server for biology"
+    count: 34
+  - name: "Journal of Alzheimer's disease : JAD"
+    count: 33
+  - name: "Neurobiology of disease"
+    count: 32
+  - name: "Neuroradiology"
+    count: 31
+  - name: "CNS neuroscience &amp; therapeutics"
+    count: 30
+  - name: "Alzheimer's &amp; dementia : the journal of the Alzheimer's Association"
+    count: 30
+  - name: "Quantitative imaging in medicine and surgery"
+    count: 29
+  - name: "Brain communications"
+    count: 26
+  - name: "Magnetic resonance in medical sciences : MRMS : an official journal of Japan Society of Magnetic Resonance in Medicine"
+    count: 25
+
+topic_coverage:
+  glymphatic-core: 1960
+  perivascular-flow: 1826
+  aging: 1792
+  imaging: 1775
+  csf: 1573
+  alzheimers-amyloid: 789
+  dti-alps: 634
+  neurodegeneration: 596
+  aqp4: 529
+  astrocyte-glia: 484
+  sleep: 477
+  isf: 459
+  meningeal-lymphatic: 382
+  stroke-ischemia: 351
+  parkinsons: 228
+  tau: 209
+  vascular-hypertension: 206
+  drug-delivery: 196
+  glioma-tumor: 145
+  tbi: 140
+  anesthesia: 118
+  multiple-sclerosis: 114
+  machine-learning: 77
+  covid-neuro: 18
+
+# Expansion ratio vs Phase 2 corpus
+expansion_stats:
+  baseline_2017: 563
+  validation_2018_2026: 3329
+  expansion_ratio: 5.91x
+  time_elapsed_years: 8.3
+
+# QA
+status: "frozen"
+provenance_fields_present:
+  - doi: 3310
+  - pmid: 3192
+  - abstract_ge_100_chars: 3328
+
+# Cross-references
+references:
+  - file: "corpus-glymphatic-2018-2026.jsonl"
+    hash: "3aa15c2c2fd8af4291374671bf6d64a63cd0ca246ab0414967a6a3c8199be5df"
+  - file: "corpus-glymphatic-2018-2026.bib"
+  - file: "validation-exclusion-log.md"
+  - file: "phase-4b-summary.md"
+
+# Notes
+notes: |
+  - Post-2018 literature shows explosive growth: ~5.9x the volume of ≤2017.
+  - New keywords that did not exist pre-2017: DTI-ALPS (Taoka 2017, widespread adoption 2019+).
+  - Basal meningeal lymphatic pathway described 2022 — separate capture query added.
+  - Preprint coverage substantially expanded due to post-COVID preprint adoption in neuroscience.
+  - Relevance threshold held at 3 (same as Phase 2) to maintain methodological parity.
+  - Corpus can be used directly for Phase 4c (prediction-vs-evidence matching).
+
+changelog:
+  - v1.0 (2026-04-23): Validation corpus built, sealed, hash committed.

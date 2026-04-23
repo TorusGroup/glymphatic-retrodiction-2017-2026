@@ -1,0 +1,100 @@
+{
+  "total": 13,
+  "clean": 11,
+  "leaked": 0,
+  "unresolved": 2,
+  "leakage_rate_pct": 0.0,
+  "results": [
+    {
+      "ref": "10.1126/scitranslmed.3003748",
+      "type": "doi",
+      "status": "clean",
+      "date": "2012-08-15",
+      "title": "A Paravascular Pathway Facilitates CSF Flow Through the Brain Parenchyma and the Clearance of Interstitial Solutes, Incl"
+    },
+    {
+      "ref": "10.1126/science.1241224",
+      "type": "doi",
+      "status": "clean",
+      "date": "2013-10-17",
+      "title": "Sleep Drives Metabolite Clearance from the Adult Brain"
+    },
+    {
+      "ref": "10.1525/JNEUROSCI.3020-14.2014",
+      "type": "doi",
+      "status": "unresolved",
+      "date": null,
+      "title": ""
+    },
+    {
+      "ref": "10.1002/ana.24271",
+      "type": "doi",
+      "status": "clean",
+      "date": "2014-09-10",
+      "title": "Impairment of paravascular clearance pathways in the aging brain"
+    },
+    {
+      "ref": "10.1038/nrneurol.2015.119",
+      "type": "doi",
+      "status": "clean",
+      "date": "2015-07-21",
+      "title": "Clearance systems in the brain—implications for Alzheimer disease"
+    },
+    {
+      "ref": "10.1007/s11604-017-0617-z",
+      "type": "doi",
+      "status": "clean",
+      "date": "2017-02-14",
+      "title": "Evaluation of glymphatic system activity with the diffusion MR technique: diffusion tensor image analysis along the peri"
+    },
+    {
+      "ref": "10.3171/2017.4.JNS161549",
+      "type": "doi",
+      "status": "unresolved",
+      "date": null,
+      "title": ""
+    },
+    {
+      "ref": "10.1038/nature14432",
+      "type": "doi",
+      "status": "clean",
+      "date": "2015-05-29",
+      "title": "Structural and functional features of central nervous system lymphatic vessels"
+    },
+    {
+      "ref": "10.1002/glia.22575",
+      "type": "doi",
+      "status": "clean",
+      "date": "2013-10-07",
+      "title": "Glial influence on the blood brain barrier"
+    },
+    {
+      "ref": "10.1084/jem.20142290",
+      "type": "doi",
+      "status": "clean",
+      "date": "2015-06-15",
+      "title": "A dural lymphatic vascular system that drains brain interstitial fluid and macromolecules"
+    },
+    {
+      "ref": "PMID:23943882",
+      "type": "pmid",
+      "status": "clean",
+      "date": "2013-10-01",
+      "title": "The apelin receptor APJ: journey from an orphan to a multifaceted regulator of homeostasis."
+    },
+    {
+      "ref": "PMID:26318022",
+      "type": "pmid",
+      "status": "clean",
+      "date": "2016-01-01",
+      "title": "The Global Alzheimer's Association Interactive Network."
+    },
+    {
+      "ref": "PMID:27005777",
+      "type": "pmid",
+      "status": "clean",
+      "date": "2016-05-13",
+      "title": "Methylation levels of P16 and TP53 that are involved in DNA strand breakage of 16HBE cells treated by hexavalent chromiu"
+    }
+  ]
+}

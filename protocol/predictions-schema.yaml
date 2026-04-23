@@ -1,0 +1,677 @@
+# Predictions Schema v1.0
+# Expedição: exp-retrodiction
+# Fase: Phase 1 — Protocol Design
+# Ciclo global: 10
+# Autor: Prometheus Lab
+# Data: 2026-04-22
+#
+# Este arquivo DEFINE o schema formal de predições hash-seladas.
+# Instâncias reais vão em `predictions-sealed.yaml` (Phase 3).
+#
+# Regras de determinismo (críticas para hash-sealing):
+#   1. sort_keys: True na serialização
+#   2. Line endings: LF only
+#   3. UTF-8 sem BOM
+#   4. Trailing newline obrigatório
+#   5. Strings multi-linha: bloco literal `|` (preserva)
+#   6. Floats: sempre 2 casas decimais (ex: 0.75, não 0.7500000)
+#   7. Datas: ISO-8601 (YYYY-MM-DD)
+#
+# Validação: existe script `bin/validate-predictions.js` (Phase 3 deliverable)
+# que checa conformidade com este schema antes do hash-seal.
+
+schema_version: "1.0"
+schema_name: "retrodiction-predictions"
+schema_description: >
+  Formato formal para armazenar predições científicas hash-seladas no
+  contexto da expedição exp-retrodiction. Cada predição é uma declaração
+  falsificável sobre uma descoberta que deve ocorrer em janela temporal
+  especificada, ancorada em literatura ≤2017-12-31.
+
+# ── Estrutura de um arquivo predictions-sealed.yaml ────────────────────────
+#
+# Níveis do documento:
+#   metadata:           # dados globais do arquivo
+#   predictions: [...]  # lista de predictions, cada uma seguindo o schema
+
+# ── Metadata Schema ────────────────────────────────────────────────────────
+
+metadata_schema:
+  required:
+    - schema_version
+    - expedition_id
+    - phase
+    - temporal_cutoff
+    - domain_primary
+    - generated_at
+    - opus_version
+    - operator
+    - total_predictions
+    - hash_sealing_status
+
+  optional:
+    - domain_secondary
+    - corpus_hash
+    - anomalist_pass_hash
+    - notes
+
+  fields:
+    schema_version:
+      type: string
+      pattern: '^\d+\.\d+$'
+      example: "1.0"
+
+    expedition_id:
+      type: string
+      const: "exp-retrodiction"
+
+    phase:
+      type: string
+      enum: ["R-5-draft", "R-5-sealed", "R-5-addendum"]
+      description: >
+        draft: antes do anomalista pass
+        sealed: após anomalista + hash-seal
+        addendum: correções posteriores ao seal
+
+    temporal_cutoff:
+      type: string
+      format: date
+      const: "2017-12-31"
+
+    domain_primary:
+      type: string
+      const: "glymphatic_system"
+
+    domain_secondary:
+      type: list[string]
+      optional: true
+      example: ["sleep_research", "alzheimers_pathology"]
+
+    generated_at:
+      type: string
+      format: datetime-iso8601
+      example: "2026-05-15T14:23:00Z"
+
+    opus_version:
+      type: string
+      description: "versão do modelo Opus usado"
+      example: "claude-opus-4-7-20260115"
+
+    operator:
+      type: string
+      description: "humano supervisor da sessão"
+      example: "Matheus Fink"
+
+    total_predictions:
+      type: integer
+      minimum: 15
+      description: "contagem total de predictions no arquivo"
+
+    hash_sealing_status:
+      type: string
+      enum: ["pre-seal", "sealed", "verified"]
+
+    corpus_hash:
+      type: string
+      pattern: '^[a-f0-9]{64}$'
+      description: "SHA-256 do tarball do corpus ≤2017 usado"
+
+    anomalist_pass_hash:
+      type: string
+      pattern: '^[a-f0-9]{64}$'
+      description: "SHA-256 do anomalista-audit.yaml correspondente"
+
+    notes:
+      type: string
+      optional: true
+
+# ── Prediction Schema ──────────────────────────────────────────────────────
+
+prediction_schema:
+  required:
+    - id
+    - claim
+    - prediction_statement
+    - rationale
+    - sources_used
+    - predicted_discovery_date
+    - confidence
+    - falsification_criterion
+    - isomorphism_level
+    - anomalista_verdict
+    - derivation_method
+
+  optional:
+    - contra_example_potential
+    - cross_domain_pairs
+    - expected_literature_signature
+    - author_candidates
+    - commercial_implication
+
+  fields:
+    id:
+      type: string
+      pattern: '^PRED-GLY-\d{3}$'
+      description: "ID único sequencial"
+      example: "PRED-GLY-001"
+
+    claim:
+      type: string
+      description: >
+        A afirmação científica central em 1-2 frases. Deve ser específica,
+        falsificável, e entendível por um neurocientista sem contexto extra.
+      max_length_chars: 500
+      example: >
+        A disfunção glinfática precede disfunção cognitiva mensurável em
+        modelos animais de envelhecimento — a clearance reduzida é
+        observável 6-12 meses antes de déficits comportamentais detectáveis.
+
+    prediction_statement:
+      type: string
+      description: >
+        Estrutura "Entre [janela temporal], será publicado estudo que
+        demonstra [X] em [modelo/população]."
+      template: >
+        "Entre {start_date} e {end_date}, será publicado estudo que
+         demonstra {observation} em {subject}, usando {method}."
+      example: >
+        "Entre 2018-01 e 2026-12, será publicado estudo (ou meta-análise)
+         demonstrando correlação temporal entre decline glinfático e
+         cognição em humanos idosos, com r > 0.4 e p < 0.001."
+
+    rationale:
+      type: string
+      multiline: true
+      description: >
+        Raciocínio cross-domain que levou à predição. DEVE referenciar
+        citações específicas (IDs em sources_used).
+      min_length_chars: 200
+      example: |
+        Em 2017, temos três evidências convergentes:
+        (a) Iliff 2014 mostra que clearance glinfática declina com idade
+            em camundongos [SRC-001].
+        (b) Kress et al. 2014 mostra que declínio correlaciona com
+            mis-localização de AQP4 [SRC-004].
+        (c) Peng 2016 mostra paralelos entre glinfático e sistema linfático
+            periférico no envelhecimento [SRC-012].
+        Hipótese: se mecanismos mamíferos de clearance são conservados,
+        a precedência temporal (disfunção antes de sintoma cognitivo)
+        deve ser testada e confirmada em humanos.
+
+    sources_used:
+      type: list[source_object]
+      min_items: 3
+      description: "Lista de citações ≤2017-12-31 que suportam o rationale"
+
+    predicted_discovery_date:
+      type: object
+      fields:
+        earliest:
+          type: date
+          format: YYYY-MM-DD
+          minimum: "2018-01-01"
+          example: "2018-06-01"
+        latest:
+          type: date
+          format: YYYY-MM-DD
+          maximum: "2026-12-31"
+          example: "2024-12-31"
+        most_likely:
+          type: date
+          optional: true
+          example: "2021-06-01"
+      description: >
+        Janela esperada de publicação. Usada para cálculo de insight_value
+        (se descoberta é anterior a earliest, +bonus insight).
+
+    confidence:
+      type: float
+      range: [0.00, 1.00]
+      precision: 2
+      description: >
+        Probabilidade subjetiva de que a predição se confirmará.
+        Usada para weighted precision metric.
+      interpretation:
+        "0.90": "quase certo — base literária forte, múltiplos vetores convergem"
+        "0.70": "alta confiança — evidência sólida, alguma extrapolação"
+        "0.50": "moderada — especulação fundamentada"
+        "0.30": "baixa — cross-domain fraco, mas testável"
+      example: 0.75
+
+    falsification_criterion:
+      type: string
+      description: >
+        O que DESTRUIRIA esta predição. Específico, observável, mensurável.
+      example: >
+        Se entre 2018 e 2026 for publicado meta-análise mostrando que
+        decline cognitivo precede decline glinfático em ≥50% dos casos
+        humanos estudados, a predição é REFUTED.
+
+    isomorphism_level:
+      type: integer
+      enum: [1, 2, 3, 4]
+      description: >
+        Nível de isomorfismo cross-domain da predição (§2.7 Lab DNA).
+        Apenas nível ≥3 passa pelo Genesis. Predições sem cross-domain
+        recebem nível 0 (not applicable).
+      meanings:
+        "0": "Não há cross-domain (predição intra-domínio)"
+        "1": "Analogia (fraco, não avança)"
+        "2": "Correspondência funcional (avança com cautela)"
+        "3": "Isomorfismo estrutural (forte)"
+        "4": "Princípio invariante (ouro)"
+
+    anomalista_verdict:
+      type: string
+      enum: ["PENDING", "SURVIVED", "WOUNDED", "DESTROYED"]
+      description: >
+        Veredicto do Auditor A (Fase R-6).
+        PENDING = antes do audit.
+        SURVIVED = avança para hash-seal.
+        WOUNDED = retornou para Fase R-5 ajustada.
+        DESTROYED = removida do pool.
+
+    derivation_method:
+      type: string
+      enum:
+        - "negative_space"
+        - "cross_domain_isomorphism"
+        - "constraint_removal"
+        - "failure_archaeology"
+        - "temporal_projection"
+        - "axiomatic_inversion"
+        - "convergence_detection"
+        - "scale_bridging"
+        - "decomposition"
+      description: "Qual dos 8 vetores de detecção gerou esta predição"
+
+    contra_example_potential:
+      type: string
+      optional: true
+      description: >
+        Qual descoberta 2018-2026, se existir, destruiria esta predição
+        (mais específico que falsification_criterion).
+      example: >
+        "Se estudo post-mortem de humanos ≥80 anos mostrar que decline
+         cognitivo não correlaciona com AQP4 mis-localization, predição
+         fica SEVERAMENTE WOUNDED."
+
+    cross_domain_pairs:
+      type: list[object]
+      optional: true
+      description: "Se derivation_method é cross_domain_*, listar pares"
+      fields:
+        domain_a: string
+        domain_b: string
+        shared_structure: string
+      example:
+        - domain_a: "glymphatic_clearance"
+          domain_b: "peripheral_lymphatic_aging"
+          shared_structure: "clearance-rate decline with age via transport protein mis-localization"
+
+    expected_literature_signature:
+      type: list[string]
+      optional: true
+      description: >
+        Keywords/frases que devem aparecer no paper confirmatório.
+        Usado para search automatizada na Fase R-7.
+      example:
+        - "glymphatic aging"
+        - "AQP4 polarization"
+        - "temporal precedence cognitive"
+
+    author_candidates:
+      type: list[string]
+      optional: true
+      description: >
+        Labs/autores que provavelmente publicariam esta descoberta
+        (usado para search targeting).
+      example: ["Iliff lab", "Nedergaard lab", "Ge lab"]
+
+    commercial_implication:
+      type: string
+      optional: true
+      description: >
+        Se a predição se confirma, que aplicação comercial habilita?
+        Usado para ponte com exp-clinical-premortem.
+
+# ── Source Object Schema (for sources_used) ────────────────────────────────
+
+source_schema:
+  required:
+    - source_id
+    - authors
+    - year
+    - doi
+    - excerpt
+
+  optional:
+    - title
+    - journal
+    - pages
+    - pmid
+    - corpus_file_path
+    - relevance_note
+
+  fields:
+    source_id:
+      type: string
+      pattern: '^SRC-\d{3}$'
+      description: "ID local único dentro do arquivo"
+      example: "SRC-001"
+
+    authors:
+      type: string
+      description: "Autores no formato 'Iliff et al.' ou 'Iliff JJ, Wang M, Liao Y'"
+      example: "Iliff et al."
+
+    year:
+      type: integer
+      minimum: 1950
+      maximum: 2017
+      description: "Ano de publicação — hard cap 2017"
+
+    doi:
+      type: string
+      pattern: '^10\.\d+/.+$'
+      description: "DOI resolvido e verificado (Auditor B valida)"
+      example: "10.1126/scitranslmed.3003748"
+
+    excerpt:
+      type: string
+      multiline: true
+      description: >
+        Trecho textual direto do paper (1-3 frases). Deve ser
+        copiável-colável do PDF original. Auditor B faz grep.
+      min_length_chars: 50
+      max_length_chars: 800
+
+    title:
+      type: string
+      optional: true
+
+    journal:
+      type: string
+      optional: true
+
+    pages:
+      type: string
+      optional: true
+      example: "147ra111"
+
+    pmid:
+      type: string
+      optional: true
+      description: "PubMed ID para double-check"
+
+    corpus_file_path:
+      type: string
+      optional: true
+      description: "Path relativo ao corpus-2017 onde o PDF está armazenado"
+      example: "literature-base-2017/pdfs/iliff-2012.pdf"
+
+    relevance_note:
+      type: string
+      optional: true
+      description: "Por que este source suporta o claim — 1-2 frases"
+
+# ── Validation Rules (hard gates) ──────────────────────────────────────────
+
+validation_rules:
+  hard_gates:
+    - rule: "total_predictions >= 15"
+      gate: "Arquivo com menos de 15 predictions é inválido"
+
+    - rule: "all predictions have anomalista_verdict = SURVIVED before sealing"
+      gate: "Predições com verdict PENDING/WOUNDED/DESTROYED não podem ser seladas"
+
+    - rule: "all source DOIs are resolvable"
+      gate: "DOI 404 = schema violation (AP-010 hallucination)"
+
+    - rule: "all source years <= 2017"
+      gate: "Qualquer source 2018+ viola temporal_cutoff"
+
+    - rule: "all excerpts are verifiable in corpus PDFs"
+      gate: "Excerpt que não existe no PDF = fabricação"
+
+    - rule: "no claim contains AP-L1 through AP-L9 red flags"
+      gate: "Linguagem contaminada bloqueia o seal"
+
+    - rule: "isomorphism_level >= 3 if derivation_method starts with 'cross_domain'"
+      gate: "Cross-domain fraca não avança"
+
+    - rule: "each prediction has >= 3 sources_used"
+      gate: "Predições com <3 sources são inválidas"
+
+    - rule: "predicted_discovery_date.earliest >= 2018-01-01"
+      gate: "Janela temporal deve começar pós-cutoff"
+
+    - rule: "predicted_discovery_date.latest <= 2026-12-31"
+      gate: "Janela temporal deve terminar pré-validação"
+
+  soft_warnings:
+    - "Se >30% de predições têm isomorphism_level = 0 (intra-domínio),
+       expedição perde força meta-científica (esperado >50% cross-domain)"
+
+    - "Se distribuição de confidence é bimodal (só 0.9 e 0.3),
+       suspeitar de overconfidence ou hedging"
+
+    - "Se todas as predições vêm de 1-2 derivation_methods,
+       os 8 vetores não foram bem utilizados"
+
+# ── EXEMPLO COMPLETO: predição válida preenchida ───────────────────────────
+
+example_valid_prediction:
+  metadata:
+    schema_version: "1.0"
+    expedition_id: "exp-retrodiction"
+    phase: "R-5-sealed"
+    temporal_cutoff: "2017-12-31"
+    domain_primary: "glymphatic_system"
+    domain_secondary:
+      - "aging_research"
+      - "alzheimers_pathology"
+    generated_at: "2026-05-15T14:23:00Z"
+    opus_version: "claude-opus-4-7-20260115"
+    operator: "Matheus Fink"
+    total_predictions: 22
+    hash_sealing_status: "sealed"
+    corpus_hash: "a3f5c9b2e1d7f8a4b6c2e9d4f1a7b3c8e6d2f9a1b4c7e3d8f2a6b9c1e4d7f3a8"
+
+  predictions:
+    - id: "PRED-GLY-001"
+      claim: >
+        A disfunção glinfática (redução de clearance) em humanos idosos
+        precede cronologicamente o declínio cognitivo mensurável por
+        meses a anos, análogo ao observado em modelos murinos de
+        envelhecimento publicados em 2014-2017.
+
+      prediction_statement: >
+        Entre 2018-01-01 e 2024-12-31, será publicado estudo longitudinal
+        em humanos (≥50 participantes, ≥2 anos follow-up) demonstrando
+        que redução de eficiência glinfática (medida por técnica não-invasiva)
+        precede declínio cognitivo com lag temporal ≥ 6 meses e correlação
+        Pearson r ≥ 0.4.
+
+      rationale: |
+        Em 2017, três linhas de evidência convergem no corpus ≤2017:
+
+        (a) Kress et al. 2014 [SRC-001] demonstra que AQP4 polarization
+            declina com idade em camundongos C57BL/6, precedendo
+            degradação de memória espacial em Morris water maze.
+
+        (b) Peng et al. 2016 [SRC-002] estabelece paralelo entre declínio
+            de clearance glinfática e sistema linfático periférico em
+            envelhecimento — sugere que o mecanismo é conservado.
+
+        (c) Iliff et al. 2014 [SRC-003] mostra que clearance de amyloid
+            via glymphatic cai 60% em camundongos ≥18 meses vs. ≥2 meses,
+            e sugere isto como "precursor" de patologia AD.
+
+        Convergence Detection aplicado: neuroscientists de neurologia
+        clinical + biologia de envelhecimento + imaging estão
+        independentemente apontando para precedência temporal. A
+        hipótese de extrapolação para humanos é um Temporal Projection
+        direto, testável com técnicas de imaging que estavam emergindo
+        em 2017 (phase-contrast MRI, DTI perivascular).
+
+        Se o mecanismo é conservado entre mamíferos (como Peng sugere),
+        a precedência temporal deve replicar em humanos dentro da
+        janela 2018-2024.
+
+      sources_used:
+        - source_id: "SRC-001"
+          authors: "Kress BT, Iliff JJ, Xia M, Wang M, Wei HS, Zeppenfeld D, Xie L, Kang H, Xu Q, Liew JA, Plog BA, Ding F, Deane R, Nedergaard M"
+          year: 2014
+          doi: "10.1002/ana.24271"
+          excerpt: >
+            "Aged mice exhibited a pronounced reduction in AQP4
+            polarization along the astrocytic endfeet, which correlated
+            with decreased glymphatic clearance of interstitial solutes
+            including amyloid-β."
+          title: "Impairment of paravascular clearance pathways in the aging brain"
+          journal: "Annals of Neurology"
+          pmid: "25204284"
+          relevance_note: "Core evidence for age-related glymphatic decline preceding behavioral decline in mice"
+
+        - source_id: "SRC-002"
+          authors: "Peng W, Achariyar TM, Li B, Liao Y, Mestre H, Hitomi E, Regan S, Kasper T, Peng S, Ding F, Benveniste H, Nedergaard M, Deane R"
+          year: 2016
+          doi: "10.1016/j.nbd.2016.06.013"
+          excerpt: >
+            "The glymphatic pathway is implicated as a potential convergence
+            point connecting multiple aging-related dysfunctions, paralleling
+            peripheral lymphatic aging patterns."
+          journal: "Neurobiology of Disease"
+          relevance_note: "Establishes cross-system parallel that justifies extrapolation to humans"
+
+        - source_id: "SRC-003"
+          authors: "Iliff JJ, Chen MJ, Plog BA, Zeppenfeld DM, Soltero M, Yang L, Singh I, Deane R, Nedergaard M"
+          year: 2014
+          doi: "10.1523/JNEUROSCI.3020-14.2014"
+          excerpt: >
+            "Glymphatic function declines markedly in the aged mouse brain,
+            with reductions in CSF influx and amyloid-β clearance, which
+            may represent a mechanistic precursor to AD-associated
+            pathology."
+          journal: "Journal of Neuroscience"
+          relevance_note: "Explicitly frames glymphatic decline as 'precursor' — this is the rationale for temporal precedence hypothesis"
+
+      predicted_discovery_date:
+        earliest: "2018-01-01"
+        latest: "2024-12-31"
+        most_likely: "2021-06-01"
+
+      confidence: 0.75
+
+      falsification_criterion: >
+        Se entre 2018-2026 for publicado estudo longitudinal humano (N≥50,
+        ≥2 anos) que mostre que declínio cognitivo PRECEDE declínio
+        glinfático OU que a correlação temporal é nula (r < 0.2), a
+        predição é REFUTED. Se apenas correlações transversais forem
+        publicadas sem componente temporal, a predição permanece
+        INCONCLUSIVE.
+
+      isomorphism_level: 3
+
+      anomalista_verdict: "SURVIVED"
+
+      derivation_method: "temporal_projection"
+
+      contra_example_potential: >
+        Se a análise histopatológica post-mortem de idosos sem demência
+        mostrar disfunção glinfática equivalente à de pacientes com AD,
+        a predição de "precedência" fica SEVERAMENTE WOUNDED —
+        sugeriria que disfunção glinfática não é preditor específico.
+
+      cross_domain_pairs:
+        - domain_a: "glymphatic_clearance_mice"
+          domain_b: "peripheral_lymphatic_aging"
+          shared_structure: >
+            "Transport-protein mis-localization leads to clearance
+             decline as function of age, with lag before functional
+             phenotype emerges"
+
+      expected_literature_signature:
+        - "glymphatic aging"
+        - "AQP4 polarization"
+        - "longitudinal cognitive decline"
+        - "amyloid clearance rate"
+        - "MRI perivascular space"
+
+      author_candidates:
+        - "Jeff Iliff lab (Washington)"
+        - "Maiken Nedergaard lab (Rochester/Copenhagen)"
+        - "Yulin Ge lab (NYU)"
+        - "Helene Benveniste lab (Yale)"
+
+      commercial_implication: >
+        Se confirmada, abre janela de intervenção pré-sintomática em AD:
+        biomarkers glinfáticos poderiam identificar pacientes 5-10 anos
+        antes do diagnóstico clínico. Relevante para exp-clinical-premortem
+        em avaliação de trials com amyloid-targeting drugs (cuja falha
+        pode estar ligada a janela de intervenção tardia demais).
+
+# ── Examplo NEGATIVO: predição inválida ────────────────────────────────────
+
+example_invalid_prediction:
+  # Esta é uma predição MAL-FORMADA. Será rejeitada pelos hard gates.
+
+  id: "PRED-BAD-001"
+
+  claim: "Recent studies suggest glymphatic dysfunction causes Alzheimer's"
+  # PROBLEMA: "Recent studies" (AP-L2), sem quantificação ("causes" sem métrica)
+
+  prediction_statement: "Alzheimer's research will advance"
+  # PROBLEMA: não é falsificável, sem janela temporal, sem sujeito específico
+
+  rationale: "It seems likely given current trends"
+  # PROBLEMA: "current trends" (AP-L3), sem citações
+
+  sources_used: []
+  # PROBLEMA: <3 sources (viola hard gate)
+
+  predicted_discovery_date:
+    earliest: "2017-06-01"
+    # PROBLEMA: anterior a cutoff (viola hard gate)
+
+  confidence: 0.95
+  # PROBLEMA: overconfidence sem justificativa em rationale
+
+  falsification_criterion: "If it doesn't happen"
+  # PROBLEMA: não específico, não mensurável
+
+  isomorphism_level: 0
+  derivation_method: "convergence_detection"
+  # PROBLEMA: inconsistência — se derivation é convergência, level deveria ser ≥2
+
+  anomalista_verdict: "PENDING"
+  # Esta predição seria DESTROYED no adversarial audit.
+
+# ── Cross-References ──────────────────────────────────────────────────────
+
+cross_references:
+  - "retrodiction-protocol-spec.md §1.5 — Fase R-5 Genesis"
+  - "retrodiction-protocol-spec.md §3.R-3 — Hypothesis generation (sanitized)"
+  - "leakage-measurement-plan.md §4 — Claim-level verification"
+
+# ── Changelog ──────────────────────────────────────────────────────────────
+
+changelog:
+  - version: "1.0"
+    date: "2026-04-22"
+    author: "Prometheus Lab"
+    change: "Schema inicial — 22 campos required/optional, hard gates, example"
+
+# ── Notes ──────────────────────────────────────────────────────────────────
+
+notes: |
+  Este é um SCHEMA, não dados reais.
+  Instâncias preenchidas vão em:
+    - predictions-sealed-draft.yaml (Phase 3, pre-audit)
+    - predictions-sealed.yaml (Phase 3, post-audit, hash-sealed)
+
+  Validator: bin/validate-predictions.js (Phase 3 deliverable)
+  Hash tool: bin/seal-predictions.sh (Phase 3 deliverable)
+
+  Toda modificação neste schema requer bump de schema_version.

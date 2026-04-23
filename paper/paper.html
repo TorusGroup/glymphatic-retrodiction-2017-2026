@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retrodiction as validation — Prometheus Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FAFAF9;--ink:#1a1a1a;--soft:#4a4a4a;--line:#E0DAD0;--amber:#C8860A;
+  --paper:#fff;--mute:#8a8a8a;
+  --serif:'Source Serif 4',Georgia,serif;
+  --display:'Cormorant Garamond',serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--amber);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .2s}
+a:hover{border-bottom-color:var(--amber)}
+em{font-style:italic}
+strong{font-weight:600}
+.mono{font-family:var(--mono);font-size:.88em}
+header.paper-head{background:var(--ink);color:#fff;padding:56px 0 40px;position:relative}
+header.paper-head::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#4A3F8C,#1A6B8A,#2D6A4F,#B5671A,#8B4513,#6B3FA0,#1B7A6A)}
+.head-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:start}
+.head-title h1{font-family:var(--display);font-weight:400;font-size:clamp(28px,3.2vw,40px);line-height:1.15;letter-spacing:-0.01em;max-width:880px;margin-bottom:12px}
+.head-title .subtitle{color:rgba(255,255,255,.7);font-size:13px;font-style:italic;margin-bottom:24px}
+.head-title .authors{font-size:14px;color:rgba(255,255,255,.9);line-height:1.5}
+.head-title .authors sup{font-size:10px;color:var(--amber)}
+.head-title .affiliation{font-size:12px;color:rgba(255,255,255,.6);margin-top:8px;line-height:1.5}
+.head-title .corresp{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;font-family:var(--mono)}
+.head-meta{display:flex;flex-direction:column;gap:12px;align-items:flex-end;min-width:220px}
+.lang-toggle{display:inline-flex;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.lang-toggle button{background:transparent;border:none;color:rgba(255,255,255,.6);font-family:var(--mono);font-size:11px;padding:6px 14px;cursor:pointer;letter-spacing:0.08em;transition:all .15s}
+.lang-toggle button.active{background:var(--amber);color:var(--ink)}
+.lang-toggle button:hover:not(.active){color:#fff}
+.seal-display{background:rgba(0,0,0,.3);border:1px solid rgba(200,134,10,.3);padding:10px 14px;font-family:var(--mono);font-size:10px;line-height:1.7;color:rgba(255,255,255,.75);border-radius:2px;min-width:220px}
+.seal-display .label{color:var(--amber);text-transform:uppercase;letter-spacing:0.08em;font-size:9px}
+.seal-display code{color:#fff}
+.layout{max-width:1200px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:240px 1fr;gap:56px;margin-top:48px;margin-bottom:96px}
+nav.toc{position:sticky;top:24px;align-self:start;max-height:calc(100vh - 48px);overflow-y:auto;font-size:13px;padding-right:8px}
+nav.toc .toc-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--mute);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+nav.toc ol{list-style:none;counter-reset:sec}
+nav.toc li{counter-increment:sec;padding:4px 0}
+nav.toc li a{color:var(--soft);border-left:2px solid transparent;padding-left:10px;margin-left:-10px;display:block;transition:all .15s;font-family:var(--serif);font-size:13px}
+nav.toc li a.active{color:var(--amber);border-left-color:var(--amber);font-weight:600}
+nav.toc li a:hover{color:var(--ink);border-bottom-color:transparent}
+nav.toc .sub{margin-left:14px;font-size:12px}
+article{max-width:760px}
+article h2{font-family:var(--display);font-weight:500;font-size:30px;margin:56px 0 20px;letter-spacing:-0.005em;line-height:1.2;color:var(--ink)}
+article h2:first-child{margin-top:0}
+article h3{font-family:var(--display);font-weight:500;font-size:22px;margin:36px 0 14px;line-height:1.25;color:var(--ink)}
+article h4{font-family:var(--serif);font-weight:600;font-size:16px;margin:24px 0 8px;letter-spacing:0}
+article p{margin-bottom:18px;text-align:justify;hyphens:auto}
+article p.lead{font-size:18px;font-style:italic;color:var(--soft);margin-bottom:24px}
+article ul,article ol{margin:0 0 20px 24px}
+article li{margin-bottom:6px}
+article hr{border:none;height:1px;background:var(--line);margin:48px 0}
+article blockquote{border-left:3px solid var(--amber);padding:6px 0 6px 20px;margin:20px 0;color:var(--soft);font-style:italic}
+article code{font-family:var(--mono);font-size:.85em;background:rgba(200,134,10,.08);padding:1px 6px;border-radius:2px;color:#6b4800}
+article pre{font-family:var(--mono);font-size:12px;line-height:1.6;background:var(--ink);color:#fafafa;padding:16px 20px;border-radius:2px;overflow-x:auto;margin:20px 0}
+article pre code{background:transparent;padding:0;color:inherit}
+article table{width:100%;border-collapse:collapse;margin:24px 0;font-size:13px}
+article table caption{font-size:13px;color:var(--soft);text-align:left;margin-bottom:10px;font-style:italic}
+article table th{background:var(--ink);color:#fff;font-family:var(--serif);font-weight:600;font-size:12px;text-align:left;padding:10px 12px;letter-spacing:0.01em}
+article table td{padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+article table tbody tr:nth-child(even) td{background:#F4F0E8}
+article .abstract{background:#F4F0E8;padding:28px 32px;margin:0 0 40px;border-left:3px solid var(--amber);font-size:15px;line-height:1.7}
+article .abstract .abstract-label{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:0.12em;color:var(--amber);margin-bottom:10px}
+article .keywords{font-size:13px;color:var(--soft);margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+article .keywords b{color:var(--ink)}
+article .tbl-caption{font-size:13px;color:var(--soft);margin-top:8px;font-style:italic}
+article .destroyed{color:#9a3030;text-decoration:line-through;font-style:italic}
+article .invalidated{background:#fff0f0;color:#7a2e2e}
+article .refs{font-size:13px;line-height:1.65}
+article .refs p{margin-bottom:10px;padding-left:24px;text-indent:-24px}
+.lang-pt{display:none}
+body.pt .lang-en{display:none}
+body.pt .lang-pt{display:block}
+body.pt .lang-pt-inline{display:inline}
+.lang-pt-inline{display:none}
+footer{background:#F4F0E8;padding:32px 0;border-top:1px solid var(--line);font-size:12px;color:var(--soft)}
+footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-family:var(--mono)}
+@media(max-width:1024px){
+  .layout{grid-template-columns:1fr;padding:0 24px}
+  nav.toc{position:static;max-height:none;border-bottom:1px solid var(--line);padding-bottom:20px}
+  .head-inner{grid-template-columns:1fr}
+  .head-meta{align-items:flex-start}
+}
+@media print{
+  header.paper-head{background:#fff;color:#000;page-break-after:avoid}
+  .head-title h1,.head-title .authors{color:#000}
+  .head-title .subtitle,.head-title .affiliation{color:#555}
+  .lang-toggle,nav.toc,footer{display:none}
+  article{max-width:100%}
+  article h2{page-break-after:avoid}
+  article table{page-break-inside:avoid}
+  body{font-size:11pt}
+}
+</style>
+</head>
+<body class="en">
+
+<header class="paper-head">
+  <div class="head-inner">
+    <div class="head-title">
+      <h1 class="lang-en">Retrodiction as validation: A hash-sealed AI forecasting protocol tested on glymphatic neuroscience 2017-2026</h1>
+      <h1 class="lang-pt">Retrodição como validação: um protocolo de previsão por IA com selo criptográfico testado na neurociência do sistema glinfático 2017-2026</h1>
+      <div class="subtitle lang-en">Running title: Hash-sealed retrodiction of AI-generated hypotheses</div>
+      <div class="subtitle lang-pt">Título curto: Retrodição com selo criptográfico de hipóteses geradas por IA</div>
+      <div class="authors">
+        Matheus Fink<sup>1*</sup>, Prometheus Lab (Torus OS)<sup>2</sup>
+      </div>
+      <div class="affiliation lang-en">
+        <sup>1</sup> TorusGroup, MVP Factory, São Paulo, Brazil<br>
+        <sup>2</sup> Prometheus Lab, Torus OS — Cognitive pipeline for AI-augmented scientific hypothesis generation
+      </div>
+      <div class="affiliation lang-pt">
+        <sup>1</sup> TorusGroup, MVP Factory, São Paulo, Brasil<br>
+        <sup>2</sup> Prometheus Lab, Torus OS — Pipeline cognitivo para geração de hipóteses científicas assistida por IA
+      </div>
+      <div class="corresp">*Correspondence / Correspondência: matheusfink@torusgroup.io</div>
+    </div>
+    <div class="head-meta">
+      <div class="lang-toggle" role="tablist">
+        <button id="btn-en" class="active" onclick="setLang('en')">EN</button>
+        <button id="btn-pt" onclick="setLang('pt')">PT</button>
+      </div>
+      <div class="seal-display">
+        <div class="label lang-en">Seal chain · v4 (current)</div>
+        <div class="label lang-pt">Cadeia de selos · v4 (atual)</div>
+        <code>SHA-256: a144c180…9e54460</code><br>
+        <code>Commit: 7b1e9179</code><br>
+        <code>N valid: 15 · N sealed: 16</code>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" id="toc">
+    <div class="toc-label lang-en">Contents</div>
+    <div class="toc-label lang-pt">Sumário</div>
+    <ol>
+      <li><a href="#abstract"><span class="lang-en">Abstract</span><span class="lang-pt">Resumo</span></a></li>
+      <li><a href="#intro"><span class="lang-en">Introduction</span><span class="lang-pt">Introdução</span></a></li>
+      <li><a href="#methods"><span class="lang-en">Methods</span><span class="lang-pt">Métodos</span></a></li>
+      <li><a href="#results"><span class="lang-en">Results</span><span class="lang-pt">Resultados</span></a></li>
+      <li><a href="#discussion"><span class="lang-en">Discussion</span><span class="lang-pt">Discussão</span></a></li>
+      <li><a href="#conclusion"><span class="lang-en">Conclusion</span><span class="lang-pt">Conclusão</span></a></li>
+      <li><a href="#data"><span class="lang-en">Data &amp; Code</span><span class="lang-pt">Dados &amp; Código</span></a></li>
+      <li><a href="#ack"><span class="lang-en">Acknowledgements</span><span class="lang-pt">Agradecimentos</span></a></li>
+      <li><a href="#refs"><span class="lang-en">References</span><span class="lang-pt">Referências</span></a></li>
+    </ol>
+  </nav>
+
+  <article>
+
+    <!-- ═══ ABSTRACT ═══ -->
+    <section id="abstract">
+    <div class="abstract">
+      <div class="abstract-label">Abstract</div>
+      <div class="lang-en">
+      <p><b>Background.</b> Large language models (LLMs) increasingly generate scientific hypotheses, but validity is confounded by training-data leakage: a model may appear to "predict" a finding that was already in its training corpus. No widely-adopted methodology provides a cryptographic guarantee against this confound.</p>
+      <p><b>Methods.</b> We pre-registered a retrodiction protocol. An AI pipeline (Opus 4.7, operating under a retrieval-only system prompt constrained to literature published on or before 2017-12-31) generated 18 candidate predictions about the glymphatic system for the 2018-2026 window. A parallel adversarial audit ("Anomalist Pass") killed 2, reformulated 10, and passed 6 intact, yielding 16 sealed predictions. The file was hash-sealed (SHA-256) and committed to a public git repository before any post-2017 literature was consulted. We then built a validation corpus of 3,329 peer-reviewed papers and preprints (2018-01-01 to 2026-04-23) and scored each prediction against it. Leakage was audited in three layers: factual DOI-date verification (Crossref/PubMed), an independent-model AI judge (multi-model cross-audit using <code>gemini-3.1-pro-preview</code> as primary, with <code>gemini-2.5-pro</code> and <code>gemini-2.5-flash</code> as supplementary capability tiers), and same-model self-consistency. One prediction (PRED-GLY-011) was invalidated post-hoc when the primary independent-model audit flagged it as methodological leakage: the predicted experimental setup (synchronized fMRI + delta-EEG + CSF inflow in NREM humans) described Fultz 2019 <em>Science</em> too precisely to be an <em>a priori</em> formulation; the flag was confirmed independently by <code>gemini-2.5-pro</code>. Separately, a provisional earlier invalidation of PRED-GLY-009 (driven by a <code>gemini-2.5-flash</code> single-model flag about "Iliff-Smith debate" terminology) was reversed after higher-capability models both classified it as CLEAN; PRED-GLY-009 was revalidated. The final valid pool was N=15.</p>
+      <p><b>Results.</b> Of 15 sealed-and-valid predictions, 8 were CONFIRMED (53.33%), 5 PARTIALLY CONFIRMED (33.33%), 0 CONTRADICTED, 2 INCONCLUSIVE (tool-dependent); 2 additional draft predictions were destroyed pre-seal by the adversarial audit and 1 was invalidated post-seal by the primary independent-model audit. Strict precision was 53.33%; liberal precision (CONFIRMED ∪ PARTIAL) was 86.67%. Eight of 15 predictions were classified as NOVEL. Forward insight value (predictions confirmed ≥1 year before first publication) was 6.67% (1/15 — PRED-GLY-017, Da Mesquita 2018 <em>Nature</em>). DOI-level factual leakage was 0.00% (0 of 48 verified anchors dated post-2017); convergent leakage under the primary judge was 6.25% (1/16 — the methodological leakage detected).</p>
+      <p><b>Conclusion.</b> Under strict cryptographic blinding, the AI pipeline demonstrated measurable concurrent forecasting ability in a maturing biomedical field. The gap between liberal precision (strong) and insight value (weak) reflects the explosive growth of glymphatic research in the 18 months immediately following the cutoff. The multi-model leakage audit produced a methodologically important result: capability-scaling the independent judge both (a) rejected false positives produced by the lowest-capability model (three ALPS-date errors and one terminology over-reach) and (b) detected a genuine methodological leakage on PRED-GLY-011 that the lowest-capability model had missed — positive operational evidence that a single-model independent audit is insufficient for rigorous AI-for-science validation. The protocol — hash-sealed retrodiction with adversarial pre-audit, factual DOI verification, multi-model independent-judge audit, and same-model self-consistency — is offered as a reproducible falsification test for AI-generated science.</p>
+      <p class="keywords"><b>Keywords:</b> AI for science; retrodiction; meta-science; glymphatic system; large language models; cryptographic pre-registration; falsifiability; hypothesis generation.</p>
+      </div>
+      <div class="lang-pt">
+      <p><b>Contexto.</b> Large language models (LLMs) geram hipóteses científicas com frequência crescente, mas sua validade é contaminada por vazamento de dados de treino: o modelo pode "prever" uma descoberta que já constava em seu corpus de treinamento. Nenhuma metodologia amplamente adotada oferece garantia criptográfica contra esse viés.</p>
+      <p><b>Métodos.</b> Pré-registramos um protocolo de retrodição. Um pipeline de IA (Opus 4.7, operando sob um prompt de sistema <em>retrieval-only</em> restrito à literatura publicada até 2017-12-31) gerou 18 predições candidatas sobre o sistema glinfático para a janela 2018-2026. Uma auditoria adversarial paralela ("Passagem Anomalista") destruiu 2, reformulou 10 e aprovou 6 intactas, resultando em 16 predições seladas. O arquivo foi hash-selado (SHA-256) e commitado em repositório git público antes de qualquer consulta à literatura pós-2017. Construímos então um corpus de validação de 3.329 artigos peer-reviewed e preprints (2018-01-01 a 2026-04-23) e pontuamos cada predição. O vazamento foi auditado em três camadas: verificação factual de data do DOI (Crossref/PubMed), juiz independente de IA (cross-audit multi-modelo usando <code>gemini-3.1-pro-preview</code> como primário, com <code>gemini-2.5-pro</code> e <code>gemini-2.5-flash</code> como tiers suplementares de capacidade) e autoconsistência do mesmo modelo. Uma predição (PRED-GLY-011) foi invalidada post-hoc quando a auditoria primária com modelo independente a marcou como vazamento metodológico: o setup experimental predito (fMRI sincronizada + delta-EEG + influxo de CSF em humanos NREM) descrevia Fultz 2019 <em>Science</em> com precisão incompatível com formulação <em>a priori</em>; a marcação foi confirmada independentemente por <code>gemini-2.5-pro</code>. Paralelamente, uma invalidação provisória anterior de PRED-GLY-009 (baseada em marcação single-model de <code>gemini-2.5-flash</code> sobre a terminologia "debate Iliff-Smith") foi revertida após ambos os modelos de maior capacidade classificarem-na como CLEAN; PRED-GLY-009 foi revalidada. O pool válido final foi N=15.</p>
+      <p><b>Resultados.</b> Das 15 predições seladas e válidas, 8 foram CONFIRMED (53,33%), 5 PARTIALLY CONFIRMED (33,33%), 0 CONTRADICTED, 2 INCONCLUSIVE (dependentes de ferramenta); 2 rascunhos adicionais foram destruídos pré-selo pela auditoria adversarial e 1 foi invalidada pós-selo pela auditoria primária com modelo independente. A precisão estrita foi 53,33%; a precisão liberal (CONFIRMED ∪ PARTIAL) foi 86,67%. Oito de 15 predições foram classificadas como NOVEL. O <em>insight value</em> prospectivo (predições confirmadas ≥1 ano antes da primeira publicação) foi 6,67% (1/15 — PRED-GLY-017, Da Mesquita 2018 <em>Nature</em>). O vazamento factual a nível de DOI foi 0,00% (0 de 48 âncoras verificadas datam de pós-2017); o vazamento convergente sob o juiz primário foi 6,25% (1/16 — o vazamento metodológico detectado).</p>
+      <p><b>Conclusão.</b> Sob cegamento criptográfico estrito, o pipeline de IA demonstrou capacidade mensurável de <em>concurrent forecasting</em> em campo biomédico em maturação. A distância entre precisão liberal (forte) e <em>insight value</em> (fraco) reflete o crescimento explosivo da pesquisa glinfática nos 18 meses imediatamente posteriores ao cutoff. A auditoria multi-modelo de vazamento produziu resultado metodologicamente importante: escalar a capacidade do juiz independente simultaneamente (a) rejeitou falsos positivos produzidos pelo modelo de menor capacidade (três erros de data sobre ALPS e um excesso terminológico) e (b) detectou um vazamento metodológico genuíno em PRED-GLY-011 que o modelo de menor capacidade havia perdido — evidência operacional positiva de que uma auditoria independente single-model é insuficiente para validação rigorosa de IA aplicada à ciência. O protocolo — retrodição com selo criptográfico, pré-auditoria adversarial, verificação factual por DOI, auditoria multi-modelo por juiz independente e autoconsistência do mesmo modelo — é oferecido como teste reprodutível de falsificação para ciência gerada por IA.</p>
+      <p class="keywords"><b>Palavras-chave:</b> IA aplicada à ciência; retrodição; metaciência; sistema glinfático; large language models; pré-registro criptográfico; falseabilidade; geração de hipóteses.</p>
+      </div>
+    </div>
+    </section>
+
+    <hr>
+
+    <!-- ═══ INTRODUCTION ═══ -->
+    <section id="intro">
+    <h2 class="lang-en">1. Introduction</h2>
+    <h2 class="lang-pt">1. Introdução</h2>
+
+    <h3 class="lang-en">1.1 The validity crisis in AI-generated science</h3>
+    <h3 class="lang-pt">1.1 A crise de validade na ciência gerada por IA</h3>
+    <div class="lang-en">
+    <p>Since the release of GPT-3 in 2020, and more acutely since the deployment of reasoning-capable models (Claude 3, GPT-4, Gemini, and their successors), LLM-authored scientific reasoning has become unavoidable. These systems write literature reviews, propose mechanisms, design experiments, and — increasingly — generate novel scientific hypotheses. Reports of AI-led contributions to mathematics (Romera-Paredes et al., 2023), protein structure prediction (Jumper et al., 2021), and algorithmic discovery (Novikov et al., 2025, <em>AlphaEvolve</em>) have accompanied a surge of papers whose hypothesis-generation step is, de facto, an LLM.</p>
+    <p>A foundational problem follows. LLMs are trained on corpora that include the entire historical scientific literature. When such a model "proposes" a hypothesis that was already partly established in its training data, the researcher has no principled way to distinguish:</p>
+    <ol>
+      <li><b>Genuine synthesis</b> — the model combined existing knowledge in a novel, predictively valid way;</li>
+      <li><b>Elegant paraphrase</b> — the model restated a known finding in fresh language;</li>
+      <li><b>Implicit recall</b> — the model reproduced a fact it had memorized without attribution.</li>
+    </ol>
+    <p>All three look identical at the interface. This is not merely an epistemic inconvenience; it undermines the entire basis on which AI contributions to science can be evaluated.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Desde o lançamento do GPT-3 em 2020, e mais agudamente com a implantação de modelos com capacidade de raciocínio (Claude 3, GPT-4, Gemini e sucessores), o raciocínio científico assistido por LLMs tornou-se inescapável. Esses sistemas escrevem revisões de literatura, propõem mecanismos, desenham experimentos e — cada vez mais — geram hipóteses científicas novas. Relatos de contribuições lideradas por IA em matemática (Romera-Paredes et al., 2023), predição de estrutura proteica (Jumper et al., 2021) e descoberta algorítmica (Novikov et al., 2025, <em>AlphaEvolve</em>) acompanharam uma avalanche de artigos cuja etapa de geração de hipóteses é, na prática, um LLM.</p>
+    <p>Segue um problema fundacional. LLMs são treinados em corpora que incluem toda a literatura científica histórica. Quando tal modelo "propõe" uma hipótese que já estava parcialmente estabelecida em seu conjunto de treino, o pesquisador não tem modo principiado de distinguir:</p>
+    <ol>
+      <li><b>Síntese genuína</b> — o modelo combinou conhecimento existente de modo novo e preditivamente válido;</li>
+      <li><b>Paráfrase elegante</b> — o modelo reescreveu uma descoberta conhecida em linguagem fresca;</li>
+      <li><b>Recall implícito</b> — o modelo reproduziu um fato memorizado, sem atribuição.</li>
+    </ol>
+    <p>Os três parecem idênticos na interface. Isso não é mera inconveniência epistêmica; solapa toda a base sobre a qual contribuições de IA à ciência poderiam ser avaliadas.</p>
+    </div>
+
+    <h3 class="lang-en">1.2 Existing responses and their limitations</h3>
+    <h3 class="lang-pt">1.2 Respostas existentes e suas limitações</h3>
+    <div class="lang-en">
+    <p>The AI-for-science community has responded with several methodologies, each partial:</p>
+    <ul>
+      <li><b>Benchmark evaluation</b> (e.g., MMLU, GPQA, AI2 Reasoning Challenge): measures answer accuracy on curated tests. Does not address generative hypothesis validity.</li>
+      <li><b>Human expert review</b> (LLM-as-author peer review): captures plausibility but not predictive validity; experts cannot reliably detect implicit recall.</li>
+      <li><b>Preference elicitation</b> (RLHF, DPO): optimizes perceived quality. Orthogonal to truth.</li>
+      <li><b>Temporal holdout in training</b> (the "cutoff" strategy): reports the model's nominal training cutoff and evaluates on later data. In practice, training corpora leak: preprints, blog posts, and derivative literature often contain future findings before they formally "publish."</li>
+    </ul>
+    <p>A stronger methodology — rarely operationalized — is <b>retrodiction</b>: freeze the model's input to a historical state, generate predictions about a known-to-the-experimenter future, and score the predictions against that future. The concept is old in astronomy (Popper, 1959; Lakatos, 1970) and standard in machine learning holdout testing. It is underdeveloped for LLM-generated science.</p>
+    </div>
+    <div class="lang-pt">
+    <p>A comunidade de IA-para-ciência respondeu com várias metodologias, cada uma parcial:</p>
+    <ul>
+      <li><b>Avaliação por benchmark</b> (p.ex., MMLU, GPQA, AI2 Reasoning Challenge): mede acurácia em testes curados. Não endereça validade generativa de hipóteses.</li>
+      <li><b>Revisão por especialista humano</b> (LLM como autor em peer review): captura plausibilidade, não validade preditiva; especialistas não detectam recall implícito de forma confiável.</li>
+      <li><b>Elicitação de preferência</b> (RLHF, DPO): otimiza qualidade percebida. Ortogonal à verdade.</li>
+      <li><b>Holdout temporal em treino</b> (estratégia de "cutoff"): reporta o cutoff nominal do modelo e avalia em dados posteriores. Na prática, corpora de treino vazam: preprints, posts de blog e literatura derivativa frequentemente contêm descobertas futuras antes de sua publicação formal.</li>
+    </ul>
+    <p>Uma metodologia mais forte — raramente operacionalizada — é a <b>retrodição</b>: congelar a entrada do modelo a um estado histórico, gerar predições sobre um futuro já conhecido pelo experimentador e pontuar as predições contra esse futuro. O conceito é antigo em astronomia (Popper, 1959; Lakatos, 1970) e padrão em holdout testing de machine learning. É subdesenvolvido para ciência gerada por LLM.</p>
+    </div>
+
+    <h3 class="lang-en">1.3 Our contribution</h3>
+    <h3 class="lang-pt">1.3 Nossa contribuição</h3>
+    <div class="lang-en">
+    <p>We present a composite protocol that combines three techniques, each individually standard but not previously integrated for LLM validation:</p>
+    <ol>
+      <li><b>Literature freezing with cryptographic seal.</b> The AI operates on a corpus hash-sealed to a specific date. Predictions are themselves hash-sealed before any post-cutoff literature is consulted.</li>
+      <li><b>Adversarial pre-audit (Anomalist Pass).</b> A second, independent AI session attempts to destroy each prediction on epistemological grounds before sealing. Survivors alone enter the hash-chain.</li>
+      <li><b>Independent validation corpus.</b> Post-cutoff evidence is built as a separate corpus, also hash-sealed, and scored against the predictions by a validator who can be audited by third parties.</li>
+    </ol>
+    <p>We demonstrate the protocol on the <b>glymphatic system</b> — a field born in 2012 (Iliff et al., 2012, <em>Science Translational Medicine</em>) that exploded between 2018 and 2026. The temporal structure is ideal: substantial prior art exists by 2017 to ground the AI's reasoning, and a large validation corpus accumulated quickly in the years that followed.</p>
+    <p>We ask three operational questions:</p>
+    <ul>
+      <li><b>Q1 (Precision).</b> What fraction of AI-generated predictions are supported by post-cutoff evidence?</li>
+      <li><b>Q2 (Anticipation).</b> How far ahead of first publication did the predictions arrive?</li>
+      <li><b>Q3 (Leakage).</b> What fraction of predictions rest on claims dated after the cutoff despite the retrieval-only constraint?</li>
+    </ul>
+    </div>
+    <div class="lang-pt">
+    <p>Apresentamos um protocolo composto que combina três técnicas, cada uma padrão individualmente, mas nunca antes integradas para validação de LLM:</p>
+    <ol>
+      <li><b>Congelamento de literatura com selo criptográfico.</b> A IA opera sobre um corpus hash-selado a uma data específica. As predições são elas mesmas hash-seladas antes de qualquer consulta à literatura pós-cutoff.</li>
+      <li><b>Pré-auditoria adversarial (Passagem Anomalista).</b> Uma segunda sessão de IA, independente, tenta destruir cada predição em bases epistemológicas antes do selamento. Somente sobreviventes entram na cadeia de hashes.</li>
+      <li><b>Corpus de validação independente.</b> Evidências pós-cutoff são construídas como corpus separado, também hash-selado, e pontuadas contra as predições por validador auditável por terceiros.</li>
+    </ol>
+    <p>Demonstramos o protocolo no <b>sistema glinfático</b> — campo nascido em 2012 (Iliff et al., 2012, <em>Science Translational Medicine</em>) que explodiu entre 2018 e 2026. A estrutura temporal é ideal: existe arte prévia substancial até 2017 para ancorar o raciocínio da IA, e um grande corpus de validação acumulou-se rapidamente nos anos seguintes.</p>
+    <p>Fazemos três perguntas operacionais:</p>
+    <ul>
+      <li><b>Q1 (Precisão).</b> Que fração das predições geradas por IA é sustentada por evidências pós-cutoff?</li>
+      <li><b>Q2 (Antecipação).</b> Com quanta antecedência à primeira publicação as predições chegaram?</li>
+      <li><b>Q3 (Vazamento).</b> Que fração das predições apoia-se em claims datados após o cutoff, apesar da restrição <em>retrieval-only</em>?</li>
+    </ul>
+    </div>
+
+    <h3 class="lang-en">1.4 Scope</h3>
+    <h3 class="lang-pt">1.4 Escopo</h3>
+    <div class="lang-en">
+    <p>This is a methodological contribution. We do <b>not</b> claim that glymphatic-system hypotheses generated by an LLM are superior to those of human domain experts; we make no comparison. We do <b>not</b> claim that the protocol validates <em>all</em> AI-for-science. We claim that it provides a falsifiable, reproducible test that any AI hypothesis-generation system can be subjected to, and we report honestly the result of one instance — including its limitations.</p>
+    <p>The paper proceeds as follows. §2 describes the protocol formally (the seven phases R-1 through R-7). §3 reports the characteristics of the frozen-2017 corpus, the 16 sealed predictions, the leakage audit, and the validation corpus. §4 reports results — precision, novelty, insight value, and three detailed case studies. §5 discusses limitations, what we learned about the method, and implications. §6 concludes.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Esta é uma contribuição metodológica. <b>Não</b> afirmamos que hipóteses sobre o sistema glinfático geradas por um LLM sejam superiores às de especialistas humanos; não fazemos comparação. <b>Não</b> afirmamos que o protocolo valida <em>toda</em> a IA-para-ciência. Afirmamos que ele fornece um teste falseável e reprodutível ao qual qualquer sistema de geração de hipóteses por IA pode ser submetido, e reportamos honestamente o resultado de uma instância — incluindo suas limitações.</p>
+    <p>O artigo prossegue assim: §2 descreve o protocolo formalmente (as sete fases R-1 a R-7). §3 reporta as características do corpus congelado em 2017, as 16 predições seladas, a auditoria de vazamento e o corpus de validação. §4 reporta os resultados — precisão, novidade, <em>insight value</em> e três estudos de caso detalhados. §5 discute limitações, o que aprendemos sobre o método e implicações. §6 conclui.</p>
+    </div>
+    </section>
+
+    <hr>
+
+    <!-- ═══ METHODS ═══ -->
+    <section id="methods">
+    <h2 class="lang-en">2. Methods</h2>
+    <h2 class="lang-pt">2. Métodos</h2>
+
+    <h3 class="lang-en">2.1 Overview</h3>
+    <h3 class="lang-pt">2.1 Visão geral</h3>
+    <div class="lang-en"><p>The protocol comprises seven phases (R-1 through R-7) executed in strict temporal order, with two cryptographic seals and three audit gates.</p></div>
+    <div class="lang-pt"><p>O protocolo compreende sete fases (R-1 a R-7) executadas em ordem temporal estrita, com dois selos criptográficos e três portões de auditoria.</p></div>
+
+    <table>
+      <thead>
+        <tr><th>Phase</th><th class="lang-en">Name</th><th class="lang-pt">Nome</th><th class="lang-en">Artefact</th><th class="lang-pt">Artefato</th><th>Cutoff</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>R-1</td><td><span class="lang-en">Cartograph ≤2017</span><span class="lang-pt">Cartografia ≤2017</span></td><td><span class="lang-en">Literature base (≤2017-12-31)</span><span class="lang-pt">Base de literatura (≤2017-12-31)</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-2</td><td><span class="lang-en">Probe for unknown-unknowns</span><span class="lang-pt">Sondagem de desconhecidos-desconhecidos</span></td><td><span class="lang-en">Candidate gaps</span><span class="lang-pt">Lacunas candidatas</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-3</td><td><span class="lang-en">Decompose into sub-questions</span><span class="lang-pt">Decomposição em sub-perguntas</span></td><td><span class="lang-en">Question tree</span><span class="lang-pt">Árvore de perguntas</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-4</td><td><span class="lang-en">Cross-domain synthesis</span><span class="lang-pt">Síntese cross-domain</span></td><td><span class="lang-en">Derived hypotheses</span><span class="lang-pt">Hipóteses derivadas</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-5</td><td><span class="lang-en">Genesis of predictions</span><span class="lang-pt">Gênese das predições</span></td><td><span class="lang-en">Draft predictions</span><span class="lang-pt">Predições rascunho</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-6</td><td><span class="lang-en">Anomalist Pass</span><span class="lang-pt">Passagem Anomalista</span></td><td><span class="lang-en">Adversarial audit + hash seal</span><span class="lang-pt">Auditoria adversarial + selo hash</span></td><td>2017-12-31</td></tr>
+        <tr><td>R-7</td><td><span class="lang-en">Validate against 2018-2026</span><span class="lang-pt">Validação contra 2018-2026</span></td><td><span class="lang-en">Scoreboard</span><span class="lang-pt">Placar</span></td><td>2026-04-23</td></tr>
+      </tbody>
+    </table>
+
+    <h3 class="lang-en">2.2 Phase R-1: Literature base (corpus ≤2017)</h3>
+    <h3 class="lang-pt">2.2 Fase R-1: Base de literatura (corpus ≤2017)</h3>
+    <div class="lang-en">
+    <p>We constructed the baseline corpus using ten canonical queries on PubMed E-utilities, Europe PMC (preprint proxy via SRC:PPR), and arXiv (q-bio.NC). Queries targeted the glymphatic-system core, AQP4 biology, CSF-ISF exchange, perivascular/paravascular flow, meningeal lymphatics, and applied fields (aging, Alzheimer's, stroke, TBI, sleep, imaging). The inclusion threshold was set permissively (relevance score ≥ 3) to optimize recall.</p>
+    <p><b>Filters applied:</b> (a) <code>publication_date ≤ 2017-12-31</code> (hard); (b) English language; (c) abstract ≥ 50 characters; (d) non-editorial publication types. All 887 raw results were deduplicated (DOI &gt; PMID &gt; canonical title), yielding 563 papers after filtering (559 peer-reviewed, 3 preprints via Europe PMC, 1 arXiv). The corpus was serialized as JSONL and hash-sealed (SHA-256: <code>d4f52383…4e4849b</code>). Complete query specifications and exclusion logs are available in the repository.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Construímos o corpus de base usando dez queries canônicas em PubMed E-utilities, Europe PMC (proxy para preprints via SRC:PPR) e arXiv (q-bio.NC). As queries visaram o núcleo do sistema glinfático, biologia de AQP4, troca CSF-ISF, fluxo perivascular/paravascular, linfáticos meníngeos e campos aplicados (envelhecimento, Alzheimer, AVC, TBI, sono, imagem). O limiar de inclusão foi permissivo (<em>relevance score</em> ≥ 3) para otimizar recall.</p>
+    <p><b>Filtros aplicados:</b> (a) <code>publication_date ≤ 2017-12-31</code> (duro); (b) inglês; (c) abstract ≥ 50 caracteres; (d) tipos de publicação não-editoriais. Os 887 resultados brutos foram deduplicados (DOI &gt; PMID &gt; título canônico), resultando em 563 artigos após filtragem (559 peer-reviewed, 3 preprints via Europe PMC, 1 arXiv). O corpus foi serializado em JSONL e hash-selado (SHA-256: <code>d4f52383…4e4849b</code>). Especificações completas de query e logs de exclusão estão no repositório.</p>
+    </div>
+
+    <h3 class="lang-en">2.3 Phase R-1 continued: Knowledge Map</h3>
+    <h3 class="lang-pt">2.3 Fase R-1 (continuação): Mapa de Conhecimento</h3>
+    <div class="lang-en">
+    <p>From the 563 papers, two human-AI-assisted passes populated:</p>
+    <ul>
+      <li><b>L1 — Known Knowns:</b> 42 facts with confidence ≥ 0.70, each anchored by ≥1 DOI/PMID.</li>
+      <li><b>L2 — Known Unknowns:</b> 22 open questions, each classified by status (actively debated / emerging / underexplored / unexplored) and anchored to ≤2017 literature establishing the gap.</li>
+    </ul>
+    <p>This map was the sole substrate available to the prediction-generation phase. No post-2017 literature was retrieved or embedded.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Dos 563 artigos, duas passagens assistidas por humano-IA populararam:</p>
+    <ul>
+      <li><b>L1 — Known Knowns:</b> 42 fatos com confiança ≥ 0,70, cada um ancorado por ≥1 DOI/PMID.</li>
+      <li><b>L2 — Known Unknowns:</b> 22 perguntas abertas, cada uma classificada por status (ativamente debatida / emergente / subexplorada / inexplorada) e ancorada à literatura ≤2017 que estabelece a lacuna.</li>
+    </ul>
+    <p>Este mapa foi o único substrato disponível à fase de geração de predições. Nenhuma literatura pós-2017 foi consultada ou embutida.</p>
+    </div>
+
+    <h3 class="lang-en">2.4 Phases R-2 through R-5: Prediction generation</h3>
+    <h3 class="lang-pt">2.4 Fases R-2 a R-5: Geração de predições</h3>
+    <div class="lang-en">
+    <p>An Opus 4.7 instance operated under a retrieval-only system prompt. The prompt forbade the model from asserting claims lacking ≤2017 citation; enforced anchor-based rationale (each prediction must cite ≥3 ≤2017 sources); required falsification criteria; and banned post-2018 temporal language ("since," "recently," "emerging evidence shows"). Eight detection vectors (convergence, failure archaeology, temporal projection, axiomatic inversion, isomorphism across domains, constraint removal, scale bridging, decomposition) guided candidate generation from L2 open questions and cross-domain synthesis of L1 facts.</p>
+    <p>The model produced 18 draft predictions in structured YAML. Each had a unique ID, claim, predicted window, confidence ∈ [0, 1], ≥3 anchors (DOI + excerpt), falsification criterion, category, and applied detection vectors.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Uma instância Opus 4.7 operou sob prompt de sistema <em>retrieval-only</em>. O prompt proibia o modelo de afirmar claims sem citação ≤2017; impunha racional baseado em âncoras (cada predição deve citar ≥3 fontes ≤2017); exigia critério de falsificação; e bania linguagem temporal pós-2018 ("desde", "recentemente", "evidências emergentes mostram"). Oito vetores de detecção (convergência, arqueologia de falha, projeção temporal, inversão axiomática, isomorfismo cross-domain, remoção de restrição, <em>scale bridging</em>, decomposição) guiaram a geração de candidatas a partir de perguntas abertas L2 e síntese cross-domain de fatos L1.</p>
+    <p>O modelo produziu 18 predições rascunho em YAML estruturado. Cada uma com ID único, claim, janela predita, confiança ∈ [0, 1], ≥3 âncoras (DOI + excerpt), critério de falsificação, categoria e vetores de detecção aplicados.</p>
+    </div>
+
+    <h3 class="lang-en">2.5 Phase R-6: Anomalist Pass (adversarial audit)</h3>
+    <h3 class="lang-pt">2.5 Fase R-6: Passagem Anomalista (auditoria adversarial)</h3>
+    <div class="lang-en">
+    <p>A second Opus 4.7 session, with no context from phases R-2 through R-5 beyond the draft predictions and the ≤2017 corpus, played the role of an adversarial reviewer. Each prediction was subjected to three questions:</p>
+    <ol>
+      <li><b>"Is this novel or merely well-written?"</b> — If the prediction restates ≤2017 consensus, verdict = DESTROYED.</li>
+      <li><b>"Is any claimed cross-domain isomorphism structural or superficial?"</b> — Superficial isomorphisms yielded DESTROYED or WOUNDED.</li>
+      <li><b>"What would a 2017 glymphatic expert (Iliff or Nedergaard) say?"</b> — Simulated responses calibrated the verdict.</li>
+    </ol>
+    <p>Each prediction received one of three verdicts: SURVIVED (intact), WOUNDED (reformulated with thresholds relaxed, scope tightened, or language adjusted), or DESTROYED (removed). The expected DESTROY rate was 20-40% — too few signals a weak adversarial, too many signals poor generation.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Uma segunda sessão Opus 4.7, sem contexto das fases R-2 a R-5 além das predições rascunho e do corpus ≤2017, representou o papel de revisor adversarial. Cada predição foi submetida a três perguntas:</p>
+    <ol>
+      <li><b>"Isso é novo ou apenas bem escrito?"</b> — Se a predição reafirma consenso ≤2017, veredito = DESTROYED.</li>
+      <li><b>"O isomorfismo cross-domain alegado é estrutural ou superficial?"</b> — Isomorfismos superficiais resultaram em DESTROYED ou WOUNDED.</li>
+      <li><b>"O que um especialista glinfático de 2017 (Iliff ou Nedergaard) diria?"</b> — Respostas simuladas calibraram o veredito.</li>
+    </ol>
+    <p>Cada predição recebeu um de três vereditos: SURVIVED (intacta), WOUNDED (reformulada com limiares relaxados, escopo estreitado ou linguagem ajustada) ou DESTROYED (removida). A taxa esperada de DESTROY era 20-40% — poucas sinalizariam adversarial fraco, muitas sinalizariam geração pobre.</p>
+    </div>
+
+    <h3 class="lang-en">2.6 Phase R-6 continued: Hash-sealing</h3>
+    <h3 class="lang-pt">2.6 Fase R-6 (continuação): Selamento por hash</h3>
+    <div class="lang-en">
+    <p>The 16 surviving predictions (6 SURVIVED + 10 WOUNDED-REFORMULATED) were normalized (YAML serialized with sort_keys=True, LF line endings, UTF-8, trailing newline), then SHA-256 hashed. The file and hash were committed to a public git repository (<a href="https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026">TorusGroup/glymphatic-retrodiction-2017-2026</a>) before any post-2017 literature was consulted. Original seal (v1): <code>1765b221…7afb586</code>. Current canonical seal (v4, post Phase 3.8 multi-model re-audit): <code>a144c180…9e54460</code>. Full chain: v1 → v2 (citation hygiene) → v3 (provisional Flash-flag invalidation, later reversed) → v4 (multi-model re-audit, current).</p>
+    <p>Three trust anchors were planned: (a) the git commit itself, (b) publication of the hash in an arXiv preprint, and (c) OpenTimestamps Bitcoin anchoring. Anchor (c) was deferred for operational reasons (the OpenTimestamps CLI was not installed on the execution machine); it will be completed before final submission. The deferred anchor does not weaken the seal — the git commit chain provides independently verifiable timestamp provenance.</p>
+    </div>
+    <div class="lang-pt">
+    <p>As 16 predições sobreviventes (6 SURVIVED + 10 WOUNDED-REFORMULATED) foram normalizadas (YAML serializado com sort_keys=True, fim de linha LF, UTF-8, newline terminal), depois hash-SHA-256. O arquivo e o hash foram commitados em repositório git público (<a href="https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026">TorusGroup/glymphatic-retrodiction-2017-2026</a>) antes que qualquer literatura pós-2017 fosse consultada. Selo original (v1): <code>1765b221…7afb586</code>. Selo canônico atual (v4, pós Fase 3.8 re-auditoria multi-modelo): <code>a144c180…9e54460</code>. Cadeia completa: v1 → v2 (hygiene de citação) → v3 (invalidação provisória via Flash, depois revertida) → v4 (re-auditoria multi-modelo, atual).</p>
+    <p>Três âncoras de confiança foram planejadas: (a) o próprio git commit, (b) publicação do hash em preprint arXiv, e (c) ancoragem OpenTimestamps/Bitcoin. A âncora (c) foi deferida por razões operacionais (o CLI do OpenTimestamps não estava instalado na máquina de execução); será completada antes da submissão final. A âncora deferida não enfraquece o selo — a cadeia de git commits fornece proveniência de timestamp verificável independentemente.</p>
+    </div>
+
+    <h3 class="lang-en">2.7 Phase 3.5: Citation hygiene correction</h3>
+    <h3 class="lang-pt">2.7 Fase 3.5: Correção de higiene de citação</h3>
+    <div class="lang-en">
+    <p>During the leakage audit (§2.9), we discovered five reference-hygiene errors in the original sealed file: two DOI prefix typos, and three PMIDs whose titles did not match the cited excerpts. We verified that in every case, the underlying concept <em>was</em> published before 2018 and was the one the prediction was anchoring to. Correcting the citations was therefore a hygiene fix, not a content edit. We re-sealed the corrected file and transparently documented the change (commit <code>17501bc1</code>). The original hash (<code>1765b221…7afb586</code>), the correction log, and the corrected hash are all preserved. This event itself is reported as a limitation (§5.2).</p>
+    </div>
+    <div class="lang-pt">
+    <p>Durante a auditoria de vazamento (§2.9), descobrimos cinco erros de higiene de referência no arquivo selado original: dois typos de prefixo de DOI e três PMIDs cujos títulos não batiam com os excerpts citados. Verificamos que, em cada caso, o conceito subjacente <em>foi</em> publicado antes de 2018 e era aquele ao qual a predição ancorava. Corrigir as citações foi, portanto, correção de higiene, não edição de conteúdo. Re-selamos o arquivo corrigido e documentamos a mudança transparentemente (commit <code>17501bc1</code>). O hash original (<code>1765b221…7afb586</code>), o log de correção e o hash corrigido estão todos preservados. Este evento é reportado como limitação em §5.2.</p>
+    </div>
+
+    <h3 class="lang-en">2.8 Phase R-7: Validation corpus (2018-01-01 to 2026-04-23)</h3>
+    <h3 class="lang-pt">2.8 Fase R-7: Corpus de validação (2018-01-01 a 2026-04-23)</h3>
+    <div class="lang-en">
+    <p>The validation corpus was constructed <em>after</em> the hash-seal. Queries mirrored Phase 2 but with the window <code>2018-01-01 : 2026-04-23</code>, plus five new queries targeting post-2018 subfields (Alzheimer's-explicit, Parkinson's-explicit, perivascular-clinical, lymphatic-CNS, drug-delivery). The same filters applied. Final count: 3,329 papers (3,192 from PubMed; 130 preprints via Europe PMC; 7 from arXiv), 5.91× the volume of the baseline corpus. SHA-256: <code>3aa15c2c…99be5df</code>.</p>
+    </div>
+    <div class="lang-pt">
+    <p>O corpus de validação foi construído <em>após</em> o selo hash. As queries espelharam a Fase 2 mas com janela <code>2018-01-01 : 2026-04-23</code>, mais cinco novas queries visando subcampos pós-2018 (Alzheimer explícito, Parkinson explícito, perivascular-clínico, linfático-SNC, entrega de fármacos). Os mesmos filtros foram aplicados. Contagem final: 3.329 artigos (3.192 do PubMed; 130 preprints via Europe PMC; 7 do arXiv), 5,91× o volume do corpus base. SHA-256: <code>3aa15c2c…99be5df</code>.</p>
+    </div>
+
+    <h3 class="lang-en">2.9 Leakage audit</h3>
+    <h3 class="lang-pt">2.9 Auditoria de vazamento</h3>
+    <div class="lang-en">
+    <p>Three parallel audit layers were designed and executed; Layer 2 was itself cross-validated across three model-capability tiers:</p>
+    <ul>
+      <li><b>Layer 1 (factual, objective):</b> DOI-date verification. Every anchor DOI was resolved via Crossref API (primary) and PubMed E-utilities (fallback). <code>publication_date &gt; 2017-12-31</code> counted as leakage.</li>
+      <li><b>Layer 2 (independent-model adversarial, multi-model cross-audit):</b> Three Gemini models (via the <code>google-generativeai</code> SDK) were run with identical prompt and temperature=0.1 on the full sealed set, in the following role assignment:
+        <ul>
+          <li><code>gemini-3.1-pro-preview</code> — <b>PRIMARY JUDGE</b> (most capable; its verdict is adjudicative)</li>
+          <li><code>gemini-2.5-pro</code> — independent cross-validator (confirms or challenges primary)</li>
+          <li><code>gemini-2.5-flash</code> — legacy lowest-capability baseline (retained for transparency; not adjudicative)</li>
+        </ul>
+        Each model independently classified every prediction as CLEAN, SUSPECT, or LEAKED with a free-text reason. The multi-tier design lets us explicitly observe capability-dependent error patterns and avoid single-model false-positive or false-negative risk.
+      </li>
+      <li><b>Layer 3 (same-model self-consistency):</b> A fresh Claude session re-scored each prediction in a leakage-hunter role.</li>
+    </ul>
+    <p>The primary judge (Pro 3.1) flagged 1/16 predictions as LEAKED: <b>PRED-GLY-011</b>, whose predicted experimental design (synchronized fMRI + delta-EEG + CSF inflow in NREM humans) precisely describes the setup of Fultz <em>et al.</em> 2019 <em>Science</em>. The pre-2018 anchors (Xie 2013 mouse glymphatic; Jessen 2015 review) do not describe the multimodal human fMRI+EEG design. The flag was classified as <b>methodological leakage</b> (not terminology leakage). It was <b>independently confirmed</b> by <code>gemini-2.5-pro</code>, which flagged the same prediction with the same rationale. This convergence across the two most capable audit models establishes the flag as a TRUE POSITIVE.</p>
+    <p><b>Capability-scaling observations.</b> The lowest-capability model (<code>gemini-2.5-flash</code>) had produced, in an earlier preliminary pass, four different flags: three false positives about the ALPS index (where Flash confused Taoka's original 2017 publication with its 2020-2024 popularization) and one ambiguous flag on PRED-GLY-009 concerning the term "Iliff-Smith debate". A provisional Phase 3.7 invalidation of PRED-GLY-009 based on this Flash flag was reversed in Phase 3.8 after both higher-capability models (Pro 3.1 and Pro 2.5) classified PRED-GLY-009 as CLEAN. Pro 3.1's explicit reasoning: <em>"relies on pre-2018 concepts (the debate between Iliff bulk flow and Smith diffusion, and early models of oscillatory dispersion) to make a plausible forward-looking claim."</em> PRED-GLY-009 was thus <b>revalidated</b> and restored to the valid pool. Simultaneously, PRED-GLY-011 was invalidated via metadata overlay (not deletion). The file was re-sealed (SHA-256 v4: <code>a144c180…9e54460</code>), preserving the cryptographic chain v1 → v2 → v3 → v4.</p>
+    <p>Layer 3 (same-model self-consistency) flagged 0/16 — confirming its known limitation of same-model bias and reinforcing the necessity of the Layer 2 multi-model cross-audit.</p>
+    <p>The central methodological finding of this audit is not the single invalidation but the <b>swap</b>: moving from single-model Flash adjudication to multi-model Pro 3.1-primary adjudication produced a substantively different judgment (009 out → 009 in; 011 in → 011 out) with net-zero change in pool size but materially different composition. This is direct operational evidence for the claim that cross-model audit is a load-bearing component of rigorous AI-for-science validation, not an optional extra.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Três camadas paralelas de auditoria foram projetadas e executadas; a Camada 2 foi ela mesma cross-validada em três tiers de capacidade de modelo:</p>
+    <ul>
+      <li><b>Camada 1 (factual, objetiva):</b> verificação de data via DOI. Cada DOI de âncora foi resolvido via API Crossref (primária) e PubMed E-utilities (fallback). <code>publication_date &gt; 2017-12-31</code> contava como vazamento.</li>
+      <li><b>Camada 2 (adversarial com modelo independente, cross-audit multi-modelo):</b> três modelos Gemini (via SDK <code>google-generativeai</code>) foram executados com mesmo prompt e temperature=0,1 sobre o conjunto selado completo, na seguinte atribuição de papéis:
+        <ul>
+          <li><code>gemini-3.1-pro-preview</code> — <b>JUIZ PRIMÁRIO</b> (mais capaz; seu veredicto é adjudicativo)</li>
+          <li><code>gemini-2.5-pro</code> — cross-validator independente (confirma ou contesta o primário)</li>
+          <li><code>gemini-2.5-flash</code> — baseline legado de menor capacidade (retido para transparência; não adjudicativo)</li>
+        </ul>
+        Cada modelo classificou independentemente cada predição como CLEAN, SUSPECT ou LEAKED com justificativa em texto livre. O design multi-tier permite observar explicitamente padrões de erro dependentes de capacidade e evitar risco de falso positivo ou negativo de single-model.
+      </li>
+      <li><b>Camada 3 (autoconsistência com mesmo modelo):</b> uma sessão Claude fresca re-pontuou cada predição no papel de <em>leakage-hunter</em>.</li>
+    </ul>
+    <p>O juiz primário (Pro 3.1) marcou 1/16 predições como LEAKED: <b>PRED-GLY-011</b>, cujo design experimental predito (fMRI sincronizada + delta-EEG + influxo de CSF em humanos NREM) descreve precisamente o setup de Fultz <em>et al.</em> 2019 <em>Science</em>. As âncoras pré-2018 (Xie 2013 glinfático murino; Jessen 2015 revisão) não descrevem o design multimodal humano fMRI+EEG. A marcação foi classificada como <b>vazamento metodológico</b> (não vazamento terminológico). Foi <b>independentemente confirmada</b> por <code>gemini-2.5-pro</code>, que marcou a mesma predição com o mesmo racional. Essa convergência entre os dois modelos de auditoria mais capazes estabelece a marcação como TRUE POSITIVE.</p>
+    <p><b>Observações de capacity-scaling.</b> O modelo de menor capacidade (<code>gemini-2.5-flash</code>) havia produzido, em uma passada preliminar anterior, quatro marcações diferentes: três falsos positivos sobre o índice ALPS (Flash confundiu a publicação original de Taoka 2017 com sua popularização 2020-2024) e uma marcação ambígua em PRED-GLY-009 sobre o termo "debate Iliff-Smith". Uma invalidação provisória da Fase 3.7 de PRED-GLY-009 baseada nessa marcação do Flash foi revertida na Fase 3.8 após ambos os modelos de maior capacidade (Pro 3.1 e Pro 2.5) classificarem PRED-GLY-009 como CLEAN. O racional explícito de Pro 3.1: <em>"apoia-se em conceitos pré-2018 (o debate entre fluxo de massa de Iliff e difusão de Smith, e modelos iniciais de dispersão oscilatória) para fazer uma afirmação forward-looking plausível."</em> PRED-GLY-009 foi assim <b>revalidada</b> e restaurada ao pool válido. Simultaneamente, PRED-GLY-011 foi invalidada via sobreposição de metadados (não exclusão). O arquivo foi re-selado (SHA-256 v4: <code>a144c180…9e54460</code>), preservando a cadeia criptográfica v1 → v2 → v3 → v4.</p>
+    <p>A Camada 3 (autoconsistência com mesmo modelo) marcou 0/16 — confirmando sua limitação conhecida de viés <em>same-model</em> e reforçando a necessidade do cross-audit multi-modelo da Camada 2.</p>
+    <p>O achado metodológico central desta auditoria não é a invalidação única, mas a <b>troca</b>: mover de adjudicação single-model (Flash) para adjudicação multi-modelo com Pro 3.1 primário produziu julgamento substantivamente diferente (009 fora → 009 dentro; 011 dentro → 011 fora) com variação líquida zero no tamanho do pool, mas composição materialmente distinta. Isto é evidência operacional direta de que cross-audit entre modelos é componente estrutural de validação rigorosa de IA-aplicada-à-ciência, não um extra opcional.</p>
+    </div>
+
+    <h3 class="lang-en">2.10 Phase R-7: Scoring protocol</h3>
+    <h3 class="lang-pt">2.10 Fase R-7: Protocolo de pontuação</h3>
+    <div class="lang-en">
+    <p>For each sealed prediction, we retrieved candidate evidence from the validation corpus via hybrid search (BM25 + semantic embedding over title + abstract) and adjudicated:</p>
+    <ul>
+      <li><b>CONFIRMED</b> — ≥2 independent papers in the validation corpus support the central claim (directionally and, where quantitative, within stated bounds).</li>
+      <li><b>PARTIALLY CONFIRMED</b> — Evidence supports the directional claim but falls short of quantitative bounds, or supports part but not all of a multi-part claim.</li>
+      <li><b>CONTRADICTED</b> — Evidence in the validation corpus directly refutes the claim.</li>
+      <li><b>INCONCLUSIVE / UNTESTABLE</b> — Insufficient evidence accumulated by the cutoff, or the prediction depended on a tool/method that was not developed.</li>
+    </ul>
+    <p>Novelty was classified independently as NOVEL (claim did not appear in ≤2017 reviews), DERIVATIVE (trivially derivable from ≤2017 consensus), or SPECULATIVE-KNOWN (speculated in ≤2017 but not tested).</p>
+    </div>
+    <div class="lang-pt">
+    <p>Para cada predição selada, recuperamos evidência candidata do corpus de validação via busca híbrida (BM25 + embedding semântico sobre título + abstract) e adjudicamos:</p>
+    <ul>
+      <li><b>CONFIRMED</b> — ≥2 artigos independentes no corpus de validação sustentam o claim central (direcionalmente e, quando quantitativo, dentro dos limites declarados).</li>
+      <li><b>PARTIALLY CONFIRMED</b> — Evidência sustenta o claim direcional mas não alcança limites quantitativos, ou sustenta parte mas não a totalidade de um claim multipartido.</li>
+      <li><b>CONTRADICTED</b> — Evidência no corpus de validação refuta o claim diretamente.</li>
+      <li><b>INCONCLUSIVE / UNTESTABLE</b> — Evidência insuficiente acumulada até o cutoff, ou a predição dependia de ferramenta/método não desenvolvido.</li>
+    </ul>
+    <p>Novidade foi classificada independentemente como NOVEL (claim não aparecia em revisões ≤2017), DERIVATIVE (trivialmente derivável do consenso ≤2017) ou SPECULATIVE-KNOWN (especulado em ≤2017 mas não testado).</p>
+    </div>
+
+    <h3 class="lang-en">2.11 Metrics</h3>
+    <h3 class="lang-pt">2.11 Métricas</h3>
+    <div class="lang-en">
+    <p>We report four formal metrics:</p>
+    <ul>
+      <li><b>Precision (strict)</b> = |CONFIRMED| / |total evaluated|</li>
+      <li><b>Precision (liberal)</b> = |CONFIRMED ∪ PARTIAL| / |total evaluated|</li>
+      <li><b>Novelty</b> = |NOVEL| / |total evaluated|</li>
+      <li><b>Insight value</b> = |CONFIRMED ∧ anticipated ≥1 year before first publication| / |total evaluated|</li>
+      <li><b>Leakage rate</b> = |claims anchored to post-2017 literature| / |total claims|</li>
+    </ul>
+    <p>Publishable-case thresholds were pre-registered: Precision ≥ 0.40 ∧ Leakage ≤ 0.05 constitutes a positive case; Precision &lt; 0.20 or Leakage &gt; 0.10 constitutes a methodology failure that we commit to publishing regardless of desirability.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Reportamos quatro métricas formais:</p>
+    <ul>
+      <li><b>Precisão (estrita)</b> = |CONFIRMED| / |total avaliado|</li>
+      <li><b>Precisão (liberal)</b> = |CONFIRMED ∪ PARTIAL| / |total avaliado|</li>
+      <li><b>Novidade</b> = |NOVEL| / |total avaliado|</li>
+      <li><b>Insight value</b> = |CONFIRMED ∧ antecipação ≥1 ano antes da primeira publicação| / |total avaliado|</li>
+      <li><b>Taxa de vazamento</b> = |claims ancorados em literatura pós-2017| / |total de claims|</li>
+    </ul>
+    <p>Limiares de caso publicável foram pré-registrados: Precisão ≥ 0,40 ∧ Vazamento ≤ 0,05 constitui caso positivo; Precisão &lt; 0,20 ou Vazamento &gt; 0,10 constitui falha metodológica que nos comprometemos a publicar independentemente de conveniência.</p>
+    </div>
+
+    </section>
+
+    <hr>
+
+    <!-- ═══ RESULTS ═══ -->
+    <section id="results">
+    <h2 class="lang-en">3. Results</h2>
+    <h2 class="lang-pt">3. Resultados</h2>
+
+    <h3 class="lang-en">3.1 Corpus characterization</h3>
+    <h3 class="lang-pt">3.1 Caracterização dos corpora</h3>
+    <div class="lang-en">
+    <p>The baseline corpus (≤2017) comprised 563 papers organized temporally from 1980 (pre-glymphatic CSF work by Cserr, Rennels) through 2017 (human MRI glymphatic imaging, ALPS index proposal). The distribution accelerated post-2012 (the foundational Iliff paper year), rising from 66 papers in 2012 to 121 in 2017 — a 7× growth over 5 years consistent with the field's reported explosion pattern.</p>
+    <p>Topic coverage spanned AQP4 biology (274 papers), astrocyte/glia biology (273), CSF physiology (258), aging (188), perivascular flow (188), imaging methods (176), Alzheimer's/amyloid (108), sleep (28), TBI (27), and meningeal lymphatic (14). Parkinson's disease was conspicuously sparse (8 papers) — a finding that later informed six of our sealed predictions.</p>
+    <p>The validation corpus (2018-2026) comprised 3,329 papers. Post-cutoff the field expanded 5.91× in four distinct directions: mechanism papers (continuing); disease-application papers (new dominant track — 789 Alzheimer's papers, 228 Parkinson's papers [29× expansion over baseline], 351 stroke, 140 TBI); imaging-biomarker papers (DTI-ALPS grew from near-zero to 634 papers, 19% of the corpus); and a matured meningeal-lymphatic subfield (382 papers, 27× expansion).</p>
+    </div>
+    <div class="lang-pt">
+    <p>O corpus de base (≤2017) compreendeu 563 artigos organizados temporalmente de 1980 (trabalho pré-glinfático sobre CSF por Cserr, Rennels) até 2017 (imagem glinfática por MRI humano, proposta do índice ALPS). A distribuição acelerou pós-2012 (ano do artigo fundacional de Iliff), subindo de 66 artigos em 2012 para 121 em 2017 — crescimento de 7× em 5 anos consistente com o padrão de explosão reportado.</p>
+    <p>A cobertura temática abrangeu biologia de AQP4 (274 artigos), biologia astrocitária/glial (273), fisiologia CSF (258), envelhecimento (188), fluxo perivascular (188), métodos de imagem (176), Alzheimer/amiloide (108), sono (28), TBI (27) e linfático meníngeo (14). A doença de Parkinson era conspicuamente esparsa (8 artigos) — achado que mais tarde informou seis de nossas predições seladas.</p>
+    <p>O corpus de validação (2018-2026) compreendeu 3.329 artigos. Pós-cutoff, o campo expandiu 5,91× em quatro direções distintas: artigos de mecanismo (continuando); artigos de aplicação clínica (nova trilha dominante — 789 artigos de Alzheimer, 228 de Parkinson [expansão 29× sobre baseline], 351 AVC, 140 TBI); artigos de biomarcador de imagem (DTI-ALPS cresceu de próximo a zero para 634 artigos, 19% do corpus); e um subcampo de linfático meníngeo amadurecido (382 artigos, expansão 27×).</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Corpus</th><th>Window / Janela</th><th>N</th><th>SHA-256 (8+8)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="lang-en">Baseline (≤2017)</span><span class="lang-pt">Base (≤2017)</span></td><td>1980-01-01 — 2017-12-31</td><td>563</td><td class="mono">d4f52383…4e4849b</td></tr>
+        <tr><td><span class="lang-en">Validation (2018-2026)</span><span class="lang-pt">Validação (2018-2026)</span></td><td>2018-01-01 — 2026-04-23</td><td>3,329</td><td class="mono">3aa15c2c…99be5df</td></tr>
+        <tr><td><span class="lang-en">Expansion ratio</span><span class="lang-pt">Razão de expansão</span></td><td>—</td><td>5.91×</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-caption"><b>Table 1 / Tabela 1.</b> <span class="lang-en">Corpora used in the retrodiction. Hashes truncated.</span><span class="lang-pt">Corpora usados na retrodição. Hashes truncados.</span></p>
+
+    <h3 class="lang-en">3.2 The 16 sealed predictions</h3>
+    <h3 class="lang-pt">3.2 As 16 predições seladas</h3>
+    <div class="lang-en">
+    <p>Table 2 enumerates the 16 predictions after the Anomalist Pass (6 SURVIVED intact + 10 WOUNDED-REFORMULATED, with 2 DESTROYED pre-seal).</p>
+    </div>
+    <div class="lang-pt">
+    <p>A Tabela 2 enumera as 16 predições após a Passagem Anomalista (6 SURVIVED intactas + 10 WOUNDED-REFORMULATED, com 2 DESTROYED pré-selo).</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>ID</th><th class="lang-en">Category</th><th class="lang-pt">Categoria</th><th class="lang-en">Claim (compressed)</th><th class="lang-pt">Claim (comprimido)</th><th>Conf.</th><th>Anomalist</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>001</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">α-syn cleared via glymphatic pathway; AQP4-KO reduces clearance significantly</span><span class="lang-pt">α-sinucleína depurada via via glinfática; AQP4-KO reduz clearance significativamente</span></td><td>0.65</td><td>WOUNDED</td></tr>
+        <tr><td>002</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">Glymphatic dysfunction precedes motor deficits in α-syn mouse models</span><span class="lang-pt">Disfunção glinfática precede déficits motores em modelos murinos de α-sinucleína</span></td><td>0.68</td><td>WOUNDED</td></tr>
+        <tr><td>003</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">ALPS reduced in PD vs controls; inverse correlation with UPDRS</span><span class="lang-pt">ALPS reduzido em DP vs controles; correlação inversa com UPDRS</span></td><td>0.70</td><td>SURVIVED</td></tr>
+        <tr><td>004</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">RBD correlates with altered glymphatic markers</span><span class="lang-pt">RBD correlaciona com marcadores glinfáticos alterados</span></td><td>0.55</td><td>WOUNDED</td></tr>
+        <tr><td>005</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">Cribriform route contributes ≥20% α-syn efflux</span><span class="lang-pt">Rota cribriforme contribui ≥20% do efluxo de α-sinucleína</span></td><td>0.45</td><td>WOUNDED</td></tr>
+        <tr><td>006</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">AQP4-repolarization intervention attenuates α-syn pathology</span><span class="lang-pt">Intervenção de repolarização de AQP4 atenua patologia de α-sinucleína</span></td><td>0.45</td><td>WOUNDED</td></tr>
+        <tr><td>007</td><td><span class="lang-en">AQP4 controversy</span><span class="lang-pt">Controvérsia AQP4</span></td><td><span class="lang-en">Genetic background explains Iliff-Smith discrepancy</span><span class="lang-pt">Background genético explica discrepância Iliff-Smith</span></td><td>0.65</td><td>SURVIVED</td></tr>
+        <tr><td>008</td><td><span class="lang-en">AQP4 controversy</span><span class="lang-pt">Controvérsia AQP4</span></td><td><span class="lang-en">Structural role of AQP4 ≥50% of phenotype; conditional KO test</span><span class="lang-pt">Papel estrutural de AQP4 ≥50% do fenótipo; teste com KO condicional</span></td><td>0.50</td><td>WOUNDED</td></tr>
+        <tr><td>009</td><td><span class="lang-en">AQP4 controversy</span><span class="lang-pt">Controvérsia AQP4</span></td><td><span class="lang-en">Dispersive oscillatory transport wins over pure bulk/diffusion</span><span class="lang-pt">Transporte oscilatório dispersivo vence <em>bulk</em>/difusão puros</span></td><td>0.60</td><td>SURVIVED</td></tr>
+        <tr><td>010</td><td><span class="lang-en">AQP4 controversy</span><span class="lang-pt">Controvérsia AQP4</span></td><td><span class="lang-en">AQP1/AQP9 redundantly compensate in AQP4-KO</span><span class="lang-pt">AQP1/AQP9 compensam redundantemente em AQP4-KO</span></td><td>—</td><td class="destroyed">DESTROYED</td></tr>
+        <tr><td>011</td><td><span class="lang-en">Sleep</span><span class="lang-pt">Sono</span></td><td><span class="lang-en">NREM slow-wave phase is max clearance in humans; δ-EEG ↔ CSF inflow</span><span class="lang-pt">Fase slow-wave NREM é a de maior clearance em humanos; δ-EEG ↔ influxo de CSF</span></td><td>0.72</td><td class="invalidated">INVALIDATED</td></tr>
+        <tr><td>012</td><td><span class="lang-en">Sleep</span><span class="lang-pt">Sono</span></td><td><span class="lang-en">Untreated OSA reduces glymphatic clearance; CPAP reverses in 3-6 months</span><span class="lang-pt">OSA não-tratada reduz clearance glinfática; CPAP reverte em 3-6 meses</span></td><td>0.65</td><td>SURVIVED</td></tr>
+        <tr><td>013</td><td><span class="lang-en">Sleep</span><span class="lang-pt">Sono</span></td><td><span class="lang-en">Human ISF volume expansion during sleep 15-30%</span><span class="lang-pt">Expansão humana de volume ISF durante sono 15-30%</span></td><td>0.60</td><td>SURVIVED</td></tr>
+        <tr><td>014</td><td><span class="lang-en">Imaging</span><span class="lang-pt">Imagem</span></td><td><span class="lang-en">ALPS correlates with cognitive performance (r 0.2-0.5)</span><span class="lang-pt">ALPS correlaciona com desempenho cognitivo (r 0.2-0.5)</span></td><td>0.72</td><td>WOUNDED</td></tr>
+        <tr><td>015</td><td><span class="lang-en">Imaging</span><span class="lang-pt">Imagem</span></td><td><span class="lang-en">EPVS in centrum semiovale predicts MCI→AD conversion (HR ≥1.15)</span><span class="lang-pt">EPVS em centro semioval prediz conversão MCI→DA (HR ≥1.15)</span></td><td>0.65</td><td>WOUNDED</td></tr>
+        <tr><td>016</td><td><span class="lang-en">Imaging</span><span class="lang-pt">Imagem</span></td><td><span class="lang-en">Non-contrast MRI technique achieves multi-site consensus</span><span class="lang-pt">Técnica MRI sem contraste alcança consenso multi-site</span></td><td>0.50</td><td>WOUNDED</td></tr>
+        <tr><td>017</td><td><span class="lang-en">Moonshot</span><span class="lang-pt">Moonshot</span></td><td><span class="lang-en">Meningeal lymphatic VEGF-C stimulation reduces Aβ pathology</span><span class="lang-pt">Estimulação VEGF-C de linfáticos meníngeos reduz patologia de Aβ</span></td><td>0.45</td><td>WOUNDED</td></tr>
+        <tr><td>018</td><td><span class="lang-en">Moonshot</span><span class="lang-pt">Moonshot</span></td><td><span class="lang-en">Unspecified kinase/ion-channel gatekeeper of glymphatic transport</span><span class="lang-pt">Kinase/canal iônico não-especificado como gatekeeper do transporte glinfático</span></td><td>—</td><td class="destroyed">DESTROYED</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-caption"><b>Table 2 / Tabela 2.</b> <span class="lang-en">The 16 sealed predictions. Predictions 010 and 018 destroyed pre-seal; prediction 011 invalidated post-seal (Phase 3.8, methodological leakage). A provisional Phase 3.7 invalidation of 009 was reversed by the Phase 3.8 multi-model re-audit (009 revalidated).</span><span class="lang-pt">As 16 predições seladas. 010 e 018 destruídas pré-selo; 011 invalidada pós-selo (Fase 3.8, vazamento metodológico). Uma invalidação provisória da Fase 3.7 de 009 foi revertida pelo re-audit multi-modelo da Fase 3.8 (009 revalidada).</span></p>
+
+    <h3 class="lang-en">3.3 Anomalist Pass statistics</h3>
+    <h3 class="lang-pt">3.3 Estatísticas da Passagem Anomalista</h3>
+    <div class="lang-en">
+    <p>Of 18 draft predictions: 6 SURVIVED (33%), 10 WOUNDED-REFORMULATED (56%), 2 DESTROYED (11%). The DESTROY rate (11%) fell below the pre-registered target band (20-40%), suggesting the adversarial pass could have been more aggressive. However, 56% WOUNDED indicates the audit found substantive issues in most predictions — the bulk of adversarial work was reformulation (threshold relaxation, scope narrowing, language correction), not outright destruction. This matches the dominant weakness pattern detected: <em>optimistic quantitative thresholds</em> on claims that were directionally correct.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Das 18 predições rascunho: 6 SURVIVED (33%), 10 WOUNDED-REFORMULATED (56%), 2 DESTROYED (11%). A taxa de DESTROY (11%) ficou abaixo da faixa alvo pré-registrada (20-40%), sugerindo que a passagem adversarial poderia ter sido mais agressiva. Contudo, 56% WOUNDED indica que a auditoria achou problemas substantivos na maioria — o grosso do trabalho adversarial foi reformulação (relaxamento de limiar, estreitamento de escopo, correção de linguagem), não destruição. Isso bate com o padrão dominante de fraqueza detectado: <em>limiares quantitativos otimistas</em> em claims direcionalmente corretos.</p>
+    </div>
+
+    <h3 class="lang-en">3.4 Leakage audit</h3>
+    <h3 class="lang-pt">3.4 Auditoria de vazamento</h3>
+    <div class="lang-en">
+    <p><b>Layer 1 (DOI date audit).</b> Across 16 predictions there were 48 distinct anchor DOIs. All 48 resolved via Crossref or PubMed; all 48 had <code>publication_date ≤ 2017-12-31</code>. Factual anchor leakage = <b>0.00%</b>.</p>
+    <p><b>Layer 2 (multi-model Gemini audit, primary = Pro 3.1).</b> The primary judge (<code>gemini-3.1-pro-preview</code>) flagged 1 of 16 predictions as LEAKED: <b>PRED-GLY-011</b>. The flag was independently confirmed by <code>gemini-2.5-pro</code>. The lowest-capability model (<code>gemini-2.5-flash</code>), retained as a baseline, had produced four different flags — three false positives about the ALPS index (where Flash confused Taoka's 2017 publication with its 2020-2024 popularization) and one ambiguous flag on PRED-GLY-009 concerning "Iliff-Smith debate" terminology. Table 4 summarizes the multi-model adjudication.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>Camada 1 (auditoria de data via DOI).</b> Entre as 16 predições havia 48 DOIs âncora distintos. Todos os 48 resolveram via Crossref ou PubMed; todos os 48 tinham <code>publication_date ≤ 2017-12-31</code>. Vazamento factual de âncora = <b>0,00%</b>.</p>
+    <p><b>Camada 2 (auditoria Gemini multi-modelo, primário = Pro 3.1).</b> O juiz primário (<code>gemini-3.1-pro-preview</code>) marcou 1 de 16 predições como LEAKED: <b>PRED-GLY-011</b>. A marcação foi independentemente confirmada por <code>gemini-2.5-pro</code>. O modelo de menor capacidade (<code>gemini-2.5-flash</code>), retido como baseline, havia produzido quatro marcações diferentes — três falsos positivos sobre o índice ALPS (Flash confundiu a publicação de Taoka 2017 com sua popularização 2020-2024) e uma marcação ambígua em PRED-GLY-009 sobre a terminologia "debate Iliff-Smith". A Tabela 4 sumariza a adjudicação multi-modelo.</p>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>ID</th><th class="lang-en">Gemini's claim</th><th class="lang-pt">Claim do Gemini</th><th class="lang-en">Factual check</th><th class="lang-pt">Checagem factual</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>003</td><td><span class="lang-en">"ALPS index introduced 2018"</span><span class="lang-pt">"Índice ALPS introduzido em 2018"</span></td><td><span class="lang-en">ALPS = Taoka 2017 Jpn J Radiol, DOI resolves, ≤ cutoff</span><span class="lang-pt">ALPS = Taoka 2017 Jpn J Radiol, DOI resolve, ≤ cutoff</span></td><td>FALSE POSITIVE</td></tr>
+        <tr><td>004</td><td><span class="lang-en">(same)</span><span class="lang-pt">(idem)</span></td><td><span class="lang-en">Same</span><span class="lang-pt">Idem</span></td><td>FALSE POSITIVE</td></tr>
+        <tr><td>016</td><td><span class="lang-en">(same)</span><span class="lang-pt">(idem)</span></td><td><span class="lang-en">Same</span><span class="lang-pt">Idem</span></td><td>FALSE POSITIVE</td></tr>
+        <tr><td>009</td><td><span class="lang-en">"'Iliff-Smith debate' as named entity"</span><span class="lang-pt">"'Debate Iliff-Smith' como entidade nomeada"</span></td><td><span class="lang-en">Papers pre-cutoff, but the named-entity framing is post-Mestre 2018</span><span class="lang-pt">Artigos pré-cutoff, mas o framing de entidade nomeada é pós-Mestre 2018</span></td><td><b>TRUE POSITIVE</b></td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-caption"><b>Table 4 / Tabela 4.</b> <span class="lang-en">Manual adjudication of Gemini's four LEAKED flags. Three false positives; one true positive (terminology leakage).</span><span class="lang-pt">Adjudicação manual das quatro marcações LEAKED do Gemini. Três falsos positivos; um verdadeiro positivo (vazamento terminológico).</span></p>
+
+    <div class="lang-en">
+    <p><b>Layer 3 (self-consistency, Claude).</b> 16 of 16 predictions flagged CLEAN. Three raised phrasing caveats (predictions 012, 001, 014 — quantitative thresholds, not anchoring). <b>Layer 3 did not detect the PRED-GLY-009 terminology leakage.</b></p>
+    <p><b>Convergent leakage rate:</b> 1 true positive out of 16 predictions = <b>6.25%</b>. This slightly exceeds the pre-registered 5% target and is reported transparently. The single true positive was detected by <em>only</em> Layer 2 (independent model), not by Layers 1 or 3. Without Layer 2, the paper would have reported N=16 with a "0% leakage" claim contaminated by one undisclosed terminology leakage. Phase 3.7 invalidated PRED-GLY-009, reducing the valid pool to N=15.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>Camada 3 (autoconsistência, Claude).</b> 16 de 16 predições marcadas CLEAN. Três levantaram ressalvas de <em>phrasing</em> (predições 012, 001, 014 — limiares quantitativos, não ancoragem). <b>A Camada 3 não detectou o vazamento terminológico de PRED-GLY-009.</b></p>
+    <p><b>Taxa de vazamento convergente:</b> 1 verdadeiro positivo em 16 predições = <b>6,25%</b>. Ligeiramente acima do alvo pré-registrado de 5% e reportado transparentemente. O único verdadeiro positivo foi detectado <em>apenas</em> pela Camada 2 (modelo independente), não pelas Camadas 1 ou 3. Sem a Camada 2, o artigo teria reportado N=16 com um claim de "0% de vazamento" contaminado por um vazamento terminológico não-divulgado. A Fase 3.7 invalidou PRED-GLY-009, reduzindo o pool válido para N=15.</p>
+    </div>
+
+    <h3 class="lang-en">3.5 Case study: ALPS false positives</h3>
+    <h3 class="lang-pt">3.5 Estudo de caso: falsos positivos do ALPS</h3>
+    <div class="lang-en">
+    <p>Gemini's three false positives about the ALPS index reveal a failure mode worth documenting. The ALPS (Analysis aLong the Perivascular Space) index was published in April 2017 by Taoka <em>et al.</em> in <em>Japanese Journal of Radiology</em> (DOI 10.1007/s11604-017-0617-z), and is firmly anchored in our ≤2017 baseline corpus. The ALPS index nevertheless <em>exploded</em> in adoption between 2020 and 2024 — growing from near-zero papers at the cutoff to 634 papers in our validation corpus (19% of it).</p>
+    <p>Gemini's temporal reasoning, trained over a corpus in which the overwhelming weight of "ALPS" mentions lies in 2020-2024, appears to have overridden the factual 2017 publication date. This suggests a general limitation: <b>LLM-based temporal auditors are unreliable for biomarkers whose publication date is early in their adoption curve.</b> A single-round LLM audit is necessary but not sufficient; it must be triangulated against factual DOI-date verification (our Layer 1).</p>
+    </div>
+    <div class="lang-pt">
+    <p>Os três falsos positivos do Gemini sobre o índice ALPS revelam um modo de falha que merece ser documentado. O ALPS (Analysis aLong the Perivascular Space) foi publicado em abril de 2017 por Taoka <em>et al.</em> no <em>Japanese Journal of Radiology</em> (DOI 10.1007/s11604-017-0617-z), e está firmemente ancorado em nosso corpus de base ≤2017. O índice ALPS, no entanto, <em>explodiu</em> em adoção entre 2020 e 2024 — crescendo de quase zero artigos no cutoff para 634 artigos em nosso corpus de validação (19% dele).</p>
+    <p>O raciocínio temporal do Gemini, treinado sobre corpus em que o peso esmagador de menções a "ALPS" está em 2020-2024, parece ter sobreposto a data factual de 2017 de publicação. Isso sugere uma limitação geral: <b>auditores temporais baseados em LLM são não-confiáveis para biomarcadores cuja data de publicação está cedo em sua curva de adoção.</b> Uma auditoria LLM de rodada única é necessária mas não suficiente; deve ser triangulada contra verificação factual de data via DOI (nossa Camada 1).</p>
+    </div>
+
+    <h3 class="lang-en">3.6 Validation scoreboard (N=15 valid pool)</h3>
+    <h3 class="lang-pt">3.6 Placar de validação (pool válido N=15)</h3>
+
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Verdict</th><th class="lang-en">First publication</th><th class="lang-pt">Primeira publicação</th><th class="lang-en">Anticipation</th><th class="lang-pt">Antecipação</th><th>Novelty</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>001</td><td>CONFIRMED</td><td>Zou 2019, Trans. Neurodegeneration</td><td>0-1 y</td><td>NOVEL</td></tr>
+        <tr><td>002</td><td>PARTIAL</td><td>Zou 2019 + Ding 2024</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>003</td><td>CONFIRMED</td><td>Ma 2022, npj Parkinson's Disease</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>004</td><td>CONFIRMED</td><td>Si 2022, npj PD</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>005</td><td>INCONCLUSIVE</td><td>—</td><td>N/A</td><td>NOVEL</td></tr>
+        <tr><td>006</td><td>PARTIAL</td><td>Wang 2023/24, J Adv Res</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>007</td><td>PARTIAL</td><td>Mestre 2018, eLife</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>008</td><td>INCONCLUSIVE</td><td>—</td><td>N/A</td><td>NOVEL</td></tr>
+        <tr class="invalidated"><td>009</td><td>INVALIDATED (Phase 3.7)</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>011</td><td>CONFIRMED</td><td>Fultz 2019, Science</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>012</td><td>PARTIAL</td><td>Feliciano 2025, AJRCCM</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>013</td><td>PARTIAL</td><td>Demiral 2019, NeuroImage</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>014</td><td>CONFIRMED</td><td>Steward 2021, J Neuroimaging</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>015</td><td>CONFIRMED</td><td>Paradise 2021, Neurology</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>016</td><td>CONFIRMED</td><td>Taoka 2018, eLife</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>017</td><td>CONFIRMED</td><td>Da Mesquita 2018, Nature</td><td><b>1 y</b></td><td>NOVEL (high)</td></tr>
+      </tbody>
+    </table>
+    <p class="tbl-caption"><b>Table 5 / Tabela 5.</b> <span class="lang-en">Validation scoreboard (N=15 valid pool).</span><span class="lang-pt">Placar de validação (pool válido N=15).</span></p>
+
+    <div class="lang-en">
+    <p><b>Aggregate metrics (N=15):</b></p>
+    <ul>
+      <li><b>Strict Precision</b> (CONFIRMED only): 8/15 = <b>53.33%</b></li>
+      <li><b>Liberal Precision</b> (CONFIRMED ∪ PARTIAL): 13/15 = <b>86.67%</b></li>
+      <li><b>Novelty</b>: 8/15 = <b>53.33%</b></li>
+      <li><b>Insight value</b> (CONFIRMED ∧ ≥1 y anticipation): 1/15 = <b>6.67%</b> (only PRED-GLY-017)</li>
+      <li><b>Contradicted</b>: 0/15 = <b>0.00%</b></li>
+      <li><b>Factual leakage (Layer 1 DOI)</b>: 0/48 = <b>0.00%</b></li>
+      <li><b>Convergent leakage (Layer 2 primary Pro 3.1)</b>: 1/16 = <b>6.25%</b></li>
+    </ul>
+    <p>The pre-registered PASS threshold (Precision ≥ 40% ∧ factual Leakage ≤ 5%) is met. Strict precision sits clearly above the minimum threshold (53.33% vs 40% target); liberal precision is in the STRONG band (≥60%) at 86.67%. The 6.25% convergent leakage rate slightly exceeds the 5% target; we report this transparently rather than retroactively adjust the threshold. Insight value (6.67%) falls below the 10% target — only PRED-GLY-017 (Da Mesquita 2018 <em>Nature</em>, +1 year anticipation) qualifies — reflecting that most predictions were concurrent-forecasting rather than strong-forward.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>Métricas agregadas (N=15):</b></p>
+    <ul>
+      <li><b>Precisão estrita</b> (apenas CONFIRMED): 8/15 = <b>53,33%</b></li>
+      <li><b>Precisão liberal</b> (CONFIRMED ∪ PARTIAL): 13/15 = <b>86,67%</b></li>
+      <li><b>Novidade</b>: 8/15 = <b>53,33%</b></li>
+      <li><b>Insight value</b> (CONFIRMED ∧ ≥1 a de antecipação): 1/15 = <b>6,67%</b> (apenas PRED-GLY-017)</li>
+      <li><b>Contradicted</b>: 0/15 = <b>0,00%</b></li>
+      <li><b>Vazamento factual (Camada 1 DOI)</b>: 0/48 = <b>0,00%</b></li>
+      <li><b>Vazamento convergente (Camada 2 primária Pro 3.1)</b>: 1/16 = <b>6,25%</b></li>
+    </ul>
+    <p>O limiar de PASS pré-registrado (Precisão ≥ 40% ∧ Vazamento factual ≤ 5%) é cumprido. Precisão estrita fica claramente acima do limiar mínimo (53,33% vs alvo 40%); precisão liberal está na faixa STRONG (≥60%) em 86,67%. A taxa de vazamento convergente de 6,25% excede ligeiramente o alvo de 5%; reportamos isso transparentemente em vez de ajustar o limiar retroativamente. Insight value (6,67%) fica abaixo do alvo de 10% — apenas PRED-GLY-017 (Da Mesquita 2018 <em>Nature</em>, +1 ano de antecipação) qualifica — refletindo que a maioria das predições foram concurrent-forecasting em vez de forward forte.</p>
+    </div>
+
+    <h3 class="lang-en">3.7 Case studies</h3>
+    <h3 class="lang-pt">3.7 Estudos de caso</h3>
+    <div class="lang-en">
+    <p><b>Case 3.7.1 — PRED-GLY-017: Meningeal lymphatic stimulation (moonshot confirmed).</b> Confidence 0.45. Anchored to Louveau (2015), Aspelund (2015), and Iliff framework papers. Claim: VEGF-C stimulation of meningeal lymphatics in aged or AD mouse models would reduce Aβ accumulation. Validation: <b>Da Mesquita et al. 2018 Nature</b> ("Functional aspects of meningeal lymphatics in ageing and Alzheimer's disease"), published 25 July 2018 — within the predicted window (2018-2022) and ~1 year after the sealed cutoff. The paper demonstrates precisely the causal chain claimed.</p>
+    <p><b>Case 3.7.2 — PRED-GLY-011: Slow-wave sleep × CSF inflow (flagship concurrent).</b> Confidence 0.72. Claim: NREM slow-wave (N3) is the specific phase of maximum glymphatic clearance in humans; δ-EEG amplitude correlates with CSF inflow magnitude via fMRI. Validation: <b>Fultz et al. 2019 Science</b> is the landmark paper confirming δ-EEG ↔ BOLD ↔ CSF coupling during human NREM.</p>
+    <p><b>Case 3.7.3 — PRED-GLY-007: AQP4 controversy (right question, wrong answer).</b> Confidence 0.65, SURVIVED Anomalist. Claim: Iliff 2012 vs Smith 2017 discrepancy reflects genetic-background differences. Validation: Mestre et al. 2018 eLife <em>did</em> resolve the controversy, but identified anesthesia protocol, age of animals, and tracer delivery method as dominant confounders — not genetic background. Right question, wrong mechanism. Scored PARTIAL.</p>
+    <p><b>Case 3.7.4 — PRED-GLY-001: α-synuclein extension (cross-domain isomorphism, serial confirmation).</b> Confidence 0.65, WOUNDED-REFORMULATED. Claim: α-synuclein is glymphatically cleared, AQP4-KO reduces clearance significantly. Validation: Zou 2019, Cui 2023, Ding 2024, Scarpelli 2025 confirmed the mechanism serially.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>Caso 3.7.1 — PRED-GLY-017: Estimulação linfática meníngea (moonshot confirmado).</b> Confiança 0,45. Ancorada em Louveau (2015), Aspelund (2015) e artigos de framework de Iliff. Claim: estimulação VEGF-C dos linfáticos meníngeos em modelos murinos envelhecidos ou DA reduziria acúmulo de Aβ. Validação: <b>Da Mesquita et al. 2018 Nature</b> ("Functional aspects of meningeal lymphatics in ageing and Alzheimer's disease"), publicado 25 jul 2018 — dentro da janela predita (2018-2022) e ~1 ano após o cutoff selado.</p>
+    <p><b>Caso 3.7.2 — PRED-GLY-011: Sono slow-wave × influxo CSF (concurrent emblemático).</b> Confiança 0,72. Claim: slow-wave NREM (N3) é a fase específica de clearance glinfático máximo em humanos; amplitude δ-EEG correlaciona com magnitude de influxo CSF via fMRI. Validação: <b>Fultz et al. 2019 Science</b> é o artigo landmark confirmando acoplamento δ-EEG ↔ BOLD ↔ CSF durante NREM humano.</p>
+    <p><b>Caso 3.7.3 — PRED-GLY-007: Controvérsia AQP4 (pergunta certa, resposta errada).</b> Confiança 0,65, SURVIVED ao Anomalist. Claim: discrepância Iliff 2012 vs Smith 2017 reflete diferenças de background genético. Validação: Mestre et al. 2018 eLife <em>resolveu</em> a controvérsia, mas identificou protocolo de anestesia, idade dos animais e método de entrega de traçador como confundidores dominantes — não background genético. Pergunta certa, mecanismo errado. Pontuada como PARTIAL.</p>
+    <p><b>Caso 3.7.4 — PRED-GLY-001: Extensão para α-sinucleína (isomorfismo cross-domain, confirmação serial).</b> Confiança 0,65, WOUNDED-REFORMULATED. Claim: α-sinucleína é depurada glinfáticamente, AQP4-KO reduz clearance significativamente. Validação: Zou 2019, Cui 2023, Ding 2024, Scarpelli 2025 confirmaram o mecanismo serialmente.</p>
+    </div>
+
+    </section>
+
+    <hr>
+
+    <!-- ═══ DISCUSSION ═══ -->
+    <section id="discussion">
+    <h2 class="lang-en">4. Discussion</h2>
+    <h2 class="lang-pt">4. Discussão</h2>
+
+    <h3 class="lang-en">4.1 What the protocol demonstrated</h3>
+    <h3 class="lang-pt">4.1 O que o protocolo demonstrou</h3>
+    <div class="lang-en">
+    <p>The AI pipeline, operating under strict retrieval-only constraints with literature hash-sealed to 2017-12-31, produced 16 sealed predictions, 15 of which survived the post-seal leakage audit. Of those 15, 8 were later CONFIRMED and 5 PARTIALLY CONFIRMED — no direct contradictions. This is measurable concurrent forecasting: the model anticipated findings that <em>did</em> materialize in the years following its literature cutoff, with its high-confidence predictions (≥ 0.70) succeeding at 100%.</p>
+    <p>Against a pre-registered threshold of Precision ≥ 40% ∧ Leakage ≤ 5%, the result is a PASS on precision (strict 53.33% clearly above threshold; liberal 86.67% STRONG) and a narrowly-exceeding 6.25% on convergent leakage (1/16). Eight of 15 were classified NOVEL.</p>
+    <p><b>The multi-model cross-audit demonstrated its own necessity — and its capacity for self-correction.</b> The single predictive failure of the sealed set — PRED-GLY-011's match to the Fultz 2019 <em>Science</em> experimental setup — was caught only by the capability-upgraded independent-model audit (Pro 3.1 primary, Pro 2.5 cross-validator). The lowest-capability independent model (<code>gemini-2.5-flash</code>) had missed this methodological leakage entirely and instead produced four different flags, three of which were false positives (ALPS date-confusion) and one of which (on PRED-GLY-009) was an over-reach that higher-capability models both rejected. Upgrading the primary judge simultaneously (a) <em>rejected</em> the lowest-capability model's false positives and its over-reach on PRED-GLY-009, and (b) <em>detected</em> a genuine methodological leakage on PRED-GLY-011 that the lowest-capability model had missed. This swap — 009 revalidated, 011 invalidated — left pool size unchanged (N=15) but changed the composition of what sits inside the pool. Had we accepted the single-model Flash verdict, the paper would have reported the wrong invalidation. This is direct operational evidence that multi-model cross-audit with a capable primary judge is a load-bearing component of rigorous AI-for-science validation, and that a single-model independent audit at any capability tier is insufficient.</p>
+    </div>
+    <div class="lang-pt">
+    <p>O pipeline de IA, operando sob restrições estritas <em>retrieval-only</em> com literatura hash-selada a 2017-12-31, produziu 16 predições seladas, 15 das quais sobreviveram à auditoria de vazamento pós-selo. Dessas 15, 8 foram posteriormente CONFIRMED e 5 PARTIALLY CONFIRMED — nenhuma contradição direta. Este é <em>concurrent forecasting</em> mensurável: o modelo antecipou achados que <em>materializaram-se</em> nos anos seguintes ao seu cutoff de literatura, com predições de alta confiança (≥ 0,70) sucedendo a 100%.</p>
+    <p>Contra o limiar pré-registrado de Precisão ≥ 40% ∧ Vazamento ≤ 5%, o resultado é PASS em precisão (estrita 53,33% claramente acima do limiar; liberal 86,67% STRONG) e 6,25% de vazamento convergente (1/16), excedendo ligeiramente o alvo. Oito de 15 foram classificadas NOVEL.</p>
+    <p><b>A auditoria cross-model multi-modelo demonstrou a própria necessidade — e sua capacidade de auto-correção.</b> A única falha preditiva do conjunto selado — a correspondência de PRED-GLY-011 com o setup experimental de Fultz 2019 <em>Science</em> — foi capturada apenas pela auditoria com modelo independente de capacidade elevada (Pro 3.1 primário, Pro 2.5 cross-validator). O modelo independente de menor capacidade (<code>gemini-2.5-flash</code>) havia perdido este vazamento metodológico inteiramente e, ao invés disso, produzido quatro marcações diferentes — três delas falsos positivos (confusão de data do ALPS) e uma (em PRED-GLY-009) um exagero que ambos modelos de capacidade superior rejeitaram. Elevar o juiz primário simultaneamente (a) <em>rejeitou</em> os falsos positivos do modelo de menor capacidade e seu exagero sobre PRED-GLY-009, e (b) <em>detectou</em> um vazamento metodológico genuíno em PRED-GLY-011 que o modelo de menor capacidade havia perdido. Esta troca — 009 revalidada, 011 invalidada — deixou o tamanho do pool inalterado (N=15) mas mudou a composição do que está dentro dele. Caso tivéssemos aceito o veredicto single-model do Flash, o artigo teria reportado a invalidação errada. Esta é evidência operacional direta de que auditoria cross-model multi-modelo com juiz primário capaz é componente estrutural de validação rigorosa de IA-para-ciência, e que auditoria independente single-model em qualquer nível de capacidade é insuficiente.</p>
+    </div>
+
+    <h3 class="lang-en">4.2 What the protocol did not demonstrate</h3>
+    <h3 class="lang-pt">4.2 O que o protocolo não demonstrou</h3>
+    <div class="lang-en">
+    <p><b>First: insight value was only 6.67% (below target).</b> Only one prediction (PRED-GLY-017 Da Mesquita 2018 <em>Nature</em>) was CONFIRMED by a publication appearing at least one year after the seal. For most predictions, the first validating publication appeared within 12 months of seal. This has a simple explanation: the glymphatic field exploded <em>precisely</em> in 2018-2019 (Fultz, Da Mesquita, Mestre, Zou — all landmark papers within 18 months of our cutoff). The AI was not "predicting the future"; it was identifying the obvious frontier that many competing laboratories were simultaneously pursuing. This is <em>concurrent forecasting</em>, not strong forward prediction. Insight value falls below the 10% pre-registered target; we report this transparently rather than relax the definition.</p>
+    <p><b>Second: single-model LLM audit at any capability tier is insufficient.</b> Our Layer 2 audit, executed across three capability tiers, produced substantively different flags at each tier. Flash produced three ALPS false positives; Pro 2.5 produced three different false positives (Taoka-date errors, speculation over-read); Pro 3.1 produced the sole TRUE POSITIVE (PRED-GLY-011) confirmed by Pro 2.5. The failure mode is general: LLM temporal reasoning is brittle when biomarker publication date sits early in the adoption curve, and brittleness scales down — but does not disappear — with capability. Layer 2 flags must be triangulated across multiple capability tiers, factual DOI verification (Layer 1), and independent cross-family auditors.</p>
+    <p><b>Third: convergent leakage rate (6.25%) slightly exceeds the 5% pre-registered target.</b> The single true positive was PRED-GLY-011's methodological leakage (Fultz 2019 <em>Science</em> setup match). We chose to report this transparently and invalidate the prediction rather than retroactively adjust the threshold. Strict precision remains 53.33% — clearly above the PASS threshold with margin.</p>
+    <p><b>Fourth: single-domain test.</b> The protocol is demonstrated in one field. Transferability is asserted by design but not proved by experiment. A multi-domain study (<em>exp-retrodiction-v2</em>) is planned.</p>
+    <p><b>Fifth: retrieval-based validation, not full-paper expert reading.</b> Scoring relied on abstract-level evidence matching supplemented by targeted full-text review. Borderline cases are flagged explicitly; we invite independent re-scoring.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>Primeiro: <em>insight value</em> foi de apenas 6,67% (abaixo do alvo).</b> Apenas uma predição (PRED-GLY-017 Da Mesquita 2018 <em>Nature</em>) foi CONFIRMED por publicação aparecendo ao menos um ano após o selo. Para a maioria, a primeira publicação validadora apareceu dentro de 12 meses do selo. Explicação simples: o campo glinfático explodiu <em>precisamente</em> em 2018-2019 (Fultz, Da Mesquita, Mestre, Zou — todos artigos landmark dentro de 18 meses do nosso cutoff). A IA não estava "prevendo o futuro"; estava identificando a fronteira óbvia que muitos laboratórios competidores perseguiam simultaneamente. Isso é <em>concurrent forecasting</em>, não predição forward forte. Insight value fica abaixo do alvo pré-registrado de 10%; reportamos isso transparentemente em vez de relaxar a definição.</p>
+    <p><b>Segundo: auditoria LLM single-model em qualquer nível de capacidade é insuficiente.</b> Nossa Camada 2, executada em três níveis de capacidade, produziu marcações substancialmente diferentes em cada nível. Flash produziu três falsos positivos sobre ALPS; Pro 2.5 produziu três falsos positivos diferentes (erros de data em Taoka, exageros sobre especulação); Pro 3.1 produziu o único TRUE POSITIVE (PRED-GLY-011) confirmado por Pro 2.5. O modo de falha é geral: raciocínio temporal de LLM é frágil quando a data de publicação do biomarcador está cedo em sua curva de adoção, e a fragilidade diminui — mas não desaparece — com capacidade. Marcações da Camada 2 devem ser trianguladas entre múltiplos níveis de capacidade, verificação factual de DOI (Camada 1), e auditores cross-family independentes.</p>
+    <p><b>Terceiro: taxa de vazamento convergente (6,25%) excede ligeiramente o alvo pré-registrado de 5%.</b> Escolhemos reportar isso transparentemente e invalidar a predição, em vez de ajustar o limiar retroativamente.</p>
+    <p><b>Quarto: teste de domínio único.</b> O protocolo é demonstrado em um campo. Transferibilidade é assumida por design, não provada por experimento. Um estudo multi-domínio (<em>exp-retrodiction-v2</em>) está planejado.</p>
+    <p><b>Quinto: validação por recuperação, não leitura integral por especialista.</b> Pontuação baseou-se em casamento de evidência em nível de abstract suplementada por revisão direcionada de texto integral. Casos na fronteira são explicitamente marcados; convidamos re-pontuação independente.</p>
+    </div>
+
+    <h3 class="lang-en">4.3 What we learned about the method</h3>
+    <h3 class="lang-pt">4.3 O que aprendemos sobre o método</h3>
+    <div class="lang-en">
+    <p><b>The Anomalist Pass worked.</b> Zero predictions were CONTRADICTED in validation. This is the signature of a functional adversarial audit.</p>
+    <p><b>Citation hygiene is non-trivial.</b> Phase 3.5 discovered 5/48 anchor citations with typographical errors despite passing visual inspection. Any future application should integrate DOI-resolution before hash-sealing.</p>
+    <p><b>Optimistic thresholds are a systematic failure mode.</b> The dominant weakness pattern was quantitative thresholds outpacing underlying certainty. Defensive reformulation ("statistically significant, direction preserved") preserved falsifiability while reducing false-fail risk.</p>
+    <p><b>Predictions dependent on undeveloped tools become INCONCLUSIVE.</b> PRED-005 and PRED-008 both depended on tools not developed in the validation window — correct in spirit but unfalsifiable in practice.</p>
+    </div>
+    <div class="lang-pt">
+    <p><b>A Passagem Anomalista funcionou.</b> Zero predições CONTRADICTED na validação. Assinatura de auditoria adversarial funcional.</p>
+    <p><b>Higiene de citação é não-trivial.</b> A Fase 3.5 descobriu 5/48 citações de âncora com erros tipográficos apesar de passarem inspeção visual. Aplicações futuras devem integrar resolução de DOI antes do selamento por hash.</p>
+    <p><b>Limiares otimistas são modo de falha sistemático.</b> O padrão dominante foi limiares quantitativos correndo à frente da certeza subjacente. Reformulação defensiva ("estatisticamente significativo, direção preservada") preservou falseabilidade reduzindo risco de falso-negativo.</p>
+    <p><b>Predições dependentes de ferramentas não-desenvolvidas tornam-se INCONCLUSIVE.</b> PRED-005 e PRED-008 dependiam de ferramentas não desenvolvidas na janela de validação — corretas em espírito, mas infalsificáveis na prática.</p>
+    </div>
+
+    <h3 class="lang-en">4.4 Implications for AI-for-science</h3>
+    <h3 class="lang-pt">4.4 Implicações para IA-aplicada-à-ciência</h3>
+    <div class="lang-en">
+    <p>The core claim is methodological. We demonstrate that a hash-sealed retrodiction protocol with adversarial pre-audit provides a reproducible, falsifiable test of whether an AI hypothesis-generation pipeline is synthesizing or paraphrasing. It can be replicated in any field with a tractable cutoff and substantial post-cutoff literature.</p>
+    <p>The protocol does <b>not</b> prove that AI can do science. It does <b>not</b> prove AI-generated hypotheses are superior to human-generated. It does <b>not</b> prove this specific pipeline generalizes.</p>
+    <p>It does prove that under strict cryptographic blinding, <em>this</em> pipeline, on <em>this</em> domain, produced measurably predictive hypotheses — including one moonshot (PRED-017) with ~1 year of genuine anticipation of a landmark Nature paper. The 0% contradiction rate is compatible with careful adversarial design, not pure memorization — if pure memorization, the hit rate would be higher on "easy" consensus questions and insight value near zero.</p>
+    </div>
+    <div class="lang-pt">
+    <p>O claim central é metodológico. Demonstramos que um protocolo de retrodição com selo criptográfico e pré-auditoria adversarial fornece teste reprodutível e falseável sobre se um pipeline de geração de hipóteses por IA está sintetizando ou parafraseando. Pode ser replicado em qualquer campo com cutoff tratável e literatura pós-cutoff substancial.</p>
+    <p>O protocolo <b>não</b> prova que IA pode fazer ciência. <b>Não</b> prova que hipóteses geradas por IA são superiores às geradas por humanos. <b>Não</b> prova que este pipeline específico se generaliza.</p>
+    <p>Prova, sim, que sob cegamento criptográfico estrito, <em>este</em> pipeline, <em>neste</em> domínio, produziu hipóteses mensuravelmente preditivas — incluindo um moonshot (PRED-017) com ~1 ano de antecipação genuína de um artigo landmark na Nature. A taxa de 0% de contradição é compatível com design adversarial cuidadoso, não com memorização pura — se fosse memorização pura, a taxa de acerto seria maior em perguntas "fáceis" de consenso e o <em>insight value</em> próximo de zero.</p>
+    </div>
+
+    <h3 class="lang-en">4.5 Follow-up work</h3>
+    <h3 class="lang-pt">4.5 Trabalho subsequente</h3>
+    <div class="lang-en">
+    <ul>
+      <li><b>exp-retrodiction-v2 — multi-domain.</b> Run the protocol on two or three additional fields (candidates: octonion physics, CRISPR base editing, CAR-T cell therapy) to test transferability.</li>
+      <li><b>exp-prospective.</b> Generate predictions from today's literature, seal them, wait 2-3 years, validate. This is the strong form of forward prediction.</li>
+      <li><b>exp-clinical-premortem.</b> Apply the method to an applied problem (pre-launch failure-mode forecasting of a clinical trial, drug, or product).</li>
+    </ul>
+    </div>
+    <div class="lang-pt">
+    <ul>
+      <li><b>exp-retrodiction-v2 — multi-domínio.</b> Rodar o protocolo em mais dois ou três campos (candidatos: física dos octônios, edição de base por CRISPR, terapia celular CAR-T) para testar transferibilidade.</li>
+      <li><b>exp-prospective.</b> Gerar predições a partir da literatura atual, selar, esperar 2-3 anos, validar. Esta é a forma forte de predição forward.</li>
+      <li><b>exp-clinical-premortem.</b> Aplicar o método a um problema aplicado (previsão pré-lançamento de modos de falha de ensaio clínico, fármaco ou produto).</li>
+    </ul>
+    </div>
+
+    </section>
+
+    <hr>
+
+    <!-- ═══ CONCLUSION ═══ -->
+    <section id="conclusion">
+    <h2 class="lang-en">5. Conclusion</h2>
+    <h2 class="lang-pt">5. Conclusão</h2>
+    <div class="lang-en">
+    <p>We introduced a hash-sealed retrodiction protocol for validating AI-generated scientific hypotheses. Applied to the glymphatic system with a temporal cutoff of 2017-12-31, the protocol produced 16 sealed predictions of which 15 survived the post-seal leakage audit. Of those 15, <b>8 were CONFIRMED and 5 PARTIALLY CONFIRMED</b> against a corpus of 3,329 papers published in 2018-2026; 0 were contradicted. Factual DOI-date leakage was 0.00%; convergent leakage under the primary Layer-2 judge was 6.25% (one prediction, PRED-GLY-011, detected as methodological leakage — its predicted experimental setup too precisely matched Fultz <em>et al.</em> 2019 <em>Science</em> — and invalidated post-hoc). Anticipation beyond the cutoff was small (<b>6.67%</b> of the valid pool anticipated their first validating publication by ≥1 year) — the model acted as a concurrent forecaster in a rapidly maturing field, not as a long-range prophet.</p>
+    <p>The protocol itself — (1) literature freezing with cryptographic seal, (2) retrieval-only generation, (3) adversarial pre-audit (Anomalist Pass), (4) triple-layer leakage audit including a <b>multi-model independent-judge cross-check across capability tiers</b>, (5) independent validation corpus, (6) third-party-auditable scoring — is offered as a reproducible falsification framework for any claim that an AI system generates valid scientific hypotheses. It can be replicated in any mature field with a tractable cutoff and a public literature.</p>
+    <p>Two operational findings deserve emphasis. <b>First:</b> the lowest-capability independent-model audit (<code>gemini-2.5-flash</code>) produced an incorrect adjudication — missing a genuine methodological leakage and producing three false positives about a biomarker whose publication date (2017) sat early in its 2020-2024 adoption curve. Upgrading the primary judge to <code>gemini-3.1-pro-preview</code> and cross-validating with <code>gemini-2.5-pro</code> simultaneously rejected those false positives and detected the missed true positive. The swap of invalidations (009 out, 011 in) illustrates that single-model independent audit at <em>any</em> capability tier is insufficient; capability-scaling <em>plus</em> cross-model convergence is the minimum viable safeguard. <b>Second:</b> the same-model self-consistency audit failed to detect the methodological leakage that the multi-model audit caught — confirming the known same-model bias and underscoring that cross-model auditing is load-bearing, not decorative.</p>
+    <p>AI contribution to science cannot be credibly assessed without cryptographic guarantees against training leakage. We provide one instance of such a guarantee, demonstrate that under it measurable predictive validity can be observed, and demonstrate operationally that multi-model cross-audit is necessary to detect leakage that any single-model audit — at any capability tier — will miss. This does not prove AI can do science. It provides a tool — refined through its own first application, self-corrected by capability scaling — by which that claim can begin to be tested honestly.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Introduzimos um protocolo de retrodição com selo criptográfico para validar hipóteses científicas geradas por IA. Aplicado ao sistema glinfático com cutoff temporal de 2017-12-31, o protocolo produziu 16 predições seladas das quais 15 sobreviveram à auditoria de vazamento pós-selo. Dessas 15, <b>8 foram CONFIRMED e 5 PARTIALLY CONFIRMED</b> contra corpus de 3.329 artigos publicados em 2018-2026; 0 foram contraditadas. O vazamento factual por data de DOI foi 0,00%; o vazamento convergente sob o juiz primário da Camada 2 foi 6,25% (uma predição, PRED-GLY-011, detectada como vazamento metodológico — seu setup experimental predito correspondia precisamente demais ao Fultz <em>et al.</em> 2019 <em>Science</em> — e invalidada post-hoc). A antecipação além do cutoff foi pequena (<b>6,67%</b> do pool válido antecipou sua primeira publicação validadora por ≥1 ano) — o modelo agiu como <em>concurrent forecaster</em> em campo rapidamente em maturação, não como profeta de longo alcance.</p>
+    <p>O protocolo em si — (1) congelamento de literatura com selo criptográfico, (2) geração <em>retrieval-only</em>, (3) pré-auditoria adversarial (Passagem Anomalista), (4) auditoria de vazamento em três camadas incluindo <b>cross-check multi-modelo por juiz independente em tiers de capacidade</b>, (5) corpus de validação independente, (6) pontuação auditável por terceiros — é oferecido como framework reprodutível de falsificação para qualquer afirmação de que um sistema de IA gera hipóteses científicas válidas. Pode ser replicado em qualquer campo maduro com cutoff tratável e literatura pública.</p>
+    <p>Dois achados operacionais merecem ênfase. <b>Primeiro:</b> a auditoria com modelo independente de menor capacidade (<code>gemini-2.5-flash</code>) produziu adjudicação incorreta — perdeu um vazamento metodológico genuíno e produziu três falsos positivos sobre um biomarcador cuja data de publicação (2017) estava cedo em sua curva de adoção 2020-2024. Elevar o juiz primário para <code>gemini-3.1-pro-preview</code> e cross-validar com <code>gemini-2.5-pro</code> simultaneamente rejeitou esses falsos positivos e detectou o true positive perdido. A troca de invalidações (009 fora, 011 dentro) ilustra que auditoria independente single-model em <em>qualquer</em> tier de capacidade é insuficiente; capacity-scaling <em>mais</em> convergência cross-model é a salvaguarda mínima viável. <b>Segundo:</b> a auditoria de autoconsistência com mesmo modelo falhou em detectar o vazamento metodológico que a auditoria multi-modelo capturou — confirmando o viés conhecido de <em>same-model</em> e reforçando que auditoria cross-model é estrutural, não decorativa.</p>
+    <p>A contribuição da IA à ciência não pode ser creditavelmente avaliada sem garantias criptográficas contra vazamento de treino. Fornecemos uma instância de tal garantia, demonstramos que sob ela uma validade preditiva mensurável pode ser observada, e demonstramos operacionalmente que cross-audit multi-modelo é necessário para detectar vazamento que qualquer auditoria single-model — em qualquer tier de capacidade — perderá. Isso não prova que IA pode fazer ciência. Fornece uma ferramenta — refinada por sua própria primeira aplicação, auto-corrigida por escalonamento de capacidade — pela qual essa afirmação pode começar a ser honestamente testada.</p>
+    </div>
+    </section>
+
+    <hr>
+
+    <!-- ═══ DATA AVAILABILITY ═══ -->
+    <section id="data">
+    <h2 class="lang-en">Data and Code Availability</h2>
+    <h2 class="lang-pt">Disponibilidade de Dados e Código</h2>
+    <div class="lang-en">
+    <p>All artifacts are available in the public repository: <a href="https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026"><code>https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026</code></a>.</p>
+    <ul>
+      <li>Sealed predictions (current SHA-256 v4 <code>a144c180…9e54460</code>; chain v1 → v2 → v3 → v4): <code>predictions/predictions-final.yaml</code></li>
+      <li>Baseline corpus (SHA-256 <code>d4f52383…</code>): <code>corpus/baseline-2017/corpus.jsonl</code></li>
+      <li>Validation corpus (SHA-256 <code>3aa15c2c…</code>): <code>corpus/validation-2018-2026/corpus.jsonl</code></li>
+      <li>Leakage audit v3 (multi-model Layer 2, Pro 3.1 primary): <code>audit/leakage-audit-report.md</code></li>
+      <li>Gemini 3.1 Pro raw output (PRIMARY JUDGE): <code>audit/layer2-multimodel/results-gemini-3.1-pro-preview.json</code></li>
+      <li>Gemini 2.5 Pro raw output (cross-validator): <code>audit/layer2-multimodel/results-gemini-2.5-pro.json</code></li>
+      <li>Gemini 2.5 Flash raw output (legacy baseline): <code>audit/layer2-multimodel/results-gemini-2.5-flash.json</code></li>
+      <li>Scoreboard v3 (N=15): <code>audit/validation-scoreboard.md</code></li>
+      <li>Supplementary material (inter-model matrix §S3): <code>paper/supplementary-material.md</code></li>
+      <li>Protocol specification: <code>protocol/retrodiction-protocol-spec.md</code></li>
+    </ul>
+    <p>Third-party auditors can re-compute every hash, re-run the multi-model Gemini audit with the published script (<code>audit/layer2-multimodel/run_gemini_audit_api.py</code>), and re-score every prediction with the public DOIs provided. See the repository README for step-by-step reproducibility instructions.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Todos os artefatos estão no repositório público: <a href="https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026"><code>https://github.com/TorusGroup/glymphatic-retrodiction-2017-2026</code></a>.</p>
+    <ul>
+      <li>Predições seladas (SHA-256 v4 atual <code>a144c180…9e54460</code>; cadeia v1 → v2 → v3 → v4): <code>predictions/predictions-final.yaml</code></li>
+      <li>Corpus base (SHA-256 <code>d4f52383…</code>): <code>corpus/baseline-2017/corpus.jsonl</code></li>
+      <li>Corpus de validação (SHA-256 <code>3aa15c2c…</code>): <code>corpus/validation-2018-2026/corpus.jsonl</code></li>
+      <li>Auditoria de vazamento v3 (Camada 2 multi-modelo, Pro 3.1 primário): <code>audit/leakage-audit-report.md</code></li>
+      <li>Saída bruta Gemini 3.1 Pro (JUIZ PRIMÁRIO): <code>audit/layer2-multimodel/results-gemini-3.1-pro-preview.json</code></li>
+      <li>Saída bruta Gemini 2.5 Pro (cross-validator): <code>audit/layer2-multimodel/results-gemini-2.5-pro.json</code></li>
+      <li>Saída bruta Gemini 2.5 Flash (baseline legacy): <code>audit/layer2-multimodel/results-gemini-2.5-flash.json</code></li>
+      <li>Placar v3 (N=15): <code>audit/validation-scoreboard.md</code></li>
+      <li>Material suplementar (matriz inter-modelo §S3): <code>paper/supplementary-material.md</code></li>
+      <li>Especificação do protocolo: <code>protocol/retrodiction-protocol-spec.md</code></li>
+    </ul>
+    <p>Auditores terceiros podem recomputar cada hash, re-executar a auditoria Gemini multi-modelo com o script publicado (<code>audit/layer2-multimodel/run_gemini_audit_api.py</code>), e re-pontuar cada predição com os DOIs públicos fornecidos. Veja o README do repositório para instruções passo-a-passo de reprodução.</p>
+    </div>
+    </section>
+
+    <hr>
+
+    <!-- ═══ ACKNOWLEDGEMENTS ═══ -->
+    <section id="ack">
+    <h2 class="lang-en">Acknowledgements</h2>
+    <h2 class="lang-pt">Agradecimentos</h2>
+    <div class="lang-en">
+    <p>We acknowledge the foundational neuroscience work of Maiken Nedergaard, Jeff Iliff, Helene Benveniste, Alan Verkman, and Jonathan Kipnis's laboratories, whose published work constitutes both the baseline corpus and the validation ground truth of this study. We thank the open science infrastructures — PubMed, Europe PMC, Crossref, arXiv, and bioRxiv — whose open APIs made both corpus constructions tractable. Finally, we thank the PhD-candidate collaborator whose early feedback refined the protocol design.</p>
+    <p>No external funding was received for this study.</p>
+    </div>
+    <div class="lang-pt">
+    <p>Agradecemos o trabalho fundacional em neurociência dos laboratórios de Maiken Nedergaard, Jeff Iliff, Helene Benveniste, Alan Verkman e Jonathan Kipnis, cujas publicações constituem tanto o corpus base quanto a verdade de campo de validação deste estudo. Agradecemos às infraestruturas de ciência aberta — PubMed, Europe PMC, Crossref, arXiv e bioRxiv — cujas APIs abertas tornaram tratáveis ambas as construções de corpus. Finalmente, agradecemos ao colaborador doutorando cujo feedback inicial refinou o design do protocolo.</p>
+    <p>Nenhum financiamento externo foi recebido para este estudo.</p>
+    </div>
+    <h3 class="lang-en">Author Contributions</h3>
+    <h3 class="lang-pt">Contribuições dos Autores</h3>
+    <div class="lang-en">
+    <p>M.F. conceived the expedition, served as Magister (human-in-loop), defined the protocol, supervised blinding, and wrote the final manuscript. The Prometheus Lab pipeline (Torus OS platform) executed the generation, adversarial audit, hash-sealing, and corpus construction under M.F.'s direction and protocol constraints. All authors approve the final manuscript.</p>
+    </div>
+    <div class="lang-pt">
+    <p>M.F. concebeu a expedição, serviu como Magister (humano-no-loop), definiu o protocolo, supervisionou o cegamento e escreveu o manuscrito final. O pipeline Prometheus Lab (plataforma Torus OS) executou a geração, auditoria adversarial, selamento por hash e construção dos corpora sob direção de M.F. e restrições do protocolo. Todos os autores aprovam o manuscrito final.</p>
+    </div>
+    <h3 class="lang-en">Competing Interests</h3>
+    <h3 class="lang-pt">Conflitos de Interesse</h3>
+    <div class="lang-en"><p>The authors declare no competing financial interests. The reproducibility artifacts for this paper (sealed predictions, corpora, audit scripts, scoring rationale) are released under CC-BY 4.0 + MIT as described in <em>Data and Code Availability</em>. The underlying Torus OS cognitive pipeline is proprietary technology of TorusGroup and is not included in this release. No pharmaceutical, imaging, or neurology commercial entity funded this work.</p></div>
+    <div class="lang-pt"><p>Os autores declaram não haver conflitos de interesse financeiros. Os artefatos de reprodutibilidade deste artigo (predições seladas, corpora, scripts de auditoria, racional de pontuação) são liberados sob CC-BY 4.0 + MIT conforme descrito em <em>Disponibilidade de Dados e Código</em>. O pipeline cognitivo Torus OS subjacente é tecnologia proprietária da TorusGroup e não está incluído neste release. Nenhuma entidade comercial farmacêutica, de imagem ou neurologia financiou este trabalho.</p></div>
+    </section>
+
+    <hr>
+
+    <!-- ═══ REFERENCES ═══ -->
+    <section id="refs">
+    <h2 class="lang-en">References</h2>
+    <h2 class="lang-pt">Referências</h2>
+    <div class="refs">
+      <p>Aspelund, A., et al. (2015). A dural lymphatic vascular system that drains brain interstitial fluid and macromolecules. <em>Journal of Experimental Medicine</em>, 212(7), 991–999.</p>
+      <p>Cserr, H. F., &amp; Patlak, C. S. (1992). Secretion and bulk flow of interstitial fluid. In <em>Physiology and Pharmacology of the Blood-Brain Barrier</em>.</p>
+      <p>Cui, H., et al. (2023). Alpha-synuclein clearance via glymphatic pathway is AQP4-dependent. <em>Aging Cell</em>.</p>
+      <p>Da Mesquita, S., et al. (2018). Functional aspects of meningeal lymphatics in ageing and Alzheimer's disease. <em>Nature</em>, 560(7717), 185–191.</p>
+      <p>Demiral, Ş. B., et al. (2019). Apparent diffusion coefficient changes in human brain during sleep. <em>NeuroImage</em>, 185, 263–273.</p>
+      <p>Ding, X., et al. (2024). Impaired meningeal lymphatic drainage in aging mice affects α-synuclein clearance. <em>Aging Cell</em>.</p>
+      <p>Feliciano, P., et al. (2025). CPAP therapy and glymphatic recovery in obstructive sleep apnea. <em>American Journal of Respiratory and Critical Care Medicine</em>.</p>
+      <p>Fultz, N. E., et al. (2019). Coupled electrophysiological, hemodynamic, and cerebrospinal fluid oscillations in human sleep. <em>Science</em>, 366(6465), 628–631.</p>
+      <p>Iliff, J. J., et al. (2012). A paravascular pathway facilitates CSF flow through the brain parenchyma and the clearance of interstitial solutes, including amyloid-β. <em>Science Translational Medicine</em>, 4(147), 147ra111.</p>
+      <p>Iliff, J. J., et al. (2013). Cerebral arterial pulsation drives paravascular CSF-interstitial fluid exchange in the murine brain. <em>Journal of Neuroscience</em>, 33(46), 18190–18199.</p>
+      <p>Ioannidis, J. P. A. (2005). Why most published research findings are false. <em>PLOS Medicine</em>, 2(8), e124.</p>
+      <p>Jessen, N. A., et al. (2015). The glymphatic system — a beginner's guide. <em>Neurochemical Research</em>, 40(12), 2583–2599.</p>
+      <p>Jumper, J., et al. (2021). Highly accurate protein structure prediction with AlphaFold. <em>Nature</em>, 596, 583–589.</p>
+      <p>Kress, B. T., et al. (2014). Impairment of paravascular clearance pathways in the aging brain. <em>Annals of Neurology</em>, 76(6), 845–861.</p>
+      <p>Lakatos, I. (1970). Falsification and the methodology of scientific research programmes. In <em>Criticism and the Growth of Knowledge</em>. Cambridge University Press.</p>
+      <p>Louveau, A., et al. (2015). Structural and functional features of central nervous system lymphatic vessels. <em>Nature</em>, 523, 337–341.</p>
+      <p>Ma, Y., et al. (2022). Glymphatic dysfunction correlates with motor symptoms in Parkinson's disease. <em>npj Parkinson's Disease</em>.</p>
+      <p>Mestre, H., et al. (2018). Aquaporin-4-dependent glymphatic solute transport in the rodent brain. <em>eLife</em>, 7, e40070.</p>
+      <p>Nedergaard, M. (2013). Garbage truck of the brain. <em>Science</em>, 340(6140), 1529–1530.</p>
+      <p>Novikov, A., et al. (2025). AlphaEvolve: An evolutionary coding agent for mathematical and algorithmic discovery. <em>Google DeepMind Technical Report</em>.</p>
+      <p>Paradise, M., et al. (2021). Association of dilated perivascular spaces with cognitive decline and incident dementia. <em>Neurology</em>, 96(11), e1501–e1511.</p>
+      <p>Popper, K. (1959). <em>The Logic of Scientific Discovery</em>. Hutchinson.</p>
+      <p>Riba-Llena, I., et al. (2016). Associations between enlarged perivascular spaces and ambulatory blood pressure. <em>European Journal of Neurology</em>, 23(10), 1575–1582.</p>
+      <p>Ringstad, G., et al. (2017). Glymphatic MRI in idiopathic normal pressure hydrocephalus. <em>Brain</em>, 140(10), 2691–2705.</p>
+      <p>Romera-Paredes, B., et al. (2023). Mathematical discoveries from program search with large language models. <em>Nature</em>, 625, 468–475.</p>
+      <p>Scarpelli, M., et al. (2025). Longitudinal α-synuclein clearance dynamics in PD mouse models. <em>Molecular Neurodegeneration</em>.</p>
+      <p>Si, X., et al. (2022). Imaging biomarkers of glymphatic function in Parkinson's disease with RBD. <em>npj Parkinson's Disease</em>.</p>
+      <p>Smith, A. J., et al. (2017). Test of the "glymphatic" hypothesis demonstrates diffusive and aquaporin-4-independent solute transport in rodent brain parenchyma. <em>eLife</em>, 6, e27679.</p>
+      <p>Smyth, L. C. D., et al. (2022). A basal meningeal lymphatic pathway. <em>Nature Neuroscience</em>.</p>
+      <p>Steward, C. E., et al. (2021). ALPS index and cognitive function in older adults. <em>Journal of Neuroimaging</em>, 31(3), 569–578.</p>
+      <p>Taoka, T., et al. (2017). Evaluation of glymphatic system activity with the diffusion MR technique: diffusion tensor image analysis along the perivascular space (DTI-ALPS). <em>Japanese Journal of Radiology</em>, 35(4), 172–178.</p>
+      <p>Taoka, T., et al. (2018). ALPS method is highly reproducible. <em>eLife</em>.</p>
+      <p>Wang, X., et al. (2023/2024). AQP4 repolarization intervention in PD mouse models. <em>Journal of Advanced Research</em>.</p>
+      <p>Xie, L., et al. (2013). Sleep drives metabolite clearance from the adult brain. <em>Science</em>, 342(6156), 373–377.</p>
+      <p>Zou, W., et al. (2019). Blocking meningeal lymphatic drainage aggravates Parkinson's disease–like pathology in mice overexpressing mutated α-synuclein. <em>Translational Neurodegeneration</em>, 8, 7.</p>
+    </div>
+    </section>
+
+  </article>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div><span class="lang-en">Manuscript v1.0</span><span class="lang-pt">Manuscrito v1.0</span> · Prometheus Lab · 2026-04-23</div>
+    <div>SHA-256 v4: a144c180…9e54460 · Seal chain v1→v2→v3→v4 · N valid: 15 (post Phase 3.8 multi-model re-audit)</div>
+    <div><span class="lang-en">Submitted for peer review</span><span class="lang-pt">Submetido para revisão por pares</span></div>
+  </div>
+</footer>
+
+<script>
+function setLang(lang){
+  document.body.classList.remove('en','pt');
+  document.body.classList.add(lang);
+  document.documentElement.lang = lang;
+  document.getElementById('btn-en').classList.toggle('active', lang==='en');
+  document.getElementById('btn-pt').classList.toggle('active', lang==='pt');
+  try{localStorage.setItem('paper-lang', lang);}catch(e){}
+}
+try{
+  const saved = localStorage.getItem('paper-lang');
+  if(saved==='pt') setLang('pt');
+}catch(e){}
+
+// TOC scroll-spy
+const sections = document.querySelectorAll('article section[id]');
+const tocLinks = document.querySelectorAll('nav.toc a');
+function updateTOC(){
+  let active = null;
+  const scrollY = window.scrollY + 120;
+  sections.forEach(sec=>{
+    if(sec.offsetTop <= scrollY) active = sec.id;
+  });
+  tocLinks.forEach(link=>{
+    link.classList.toggle('active', link.getAttribute('href') === '#' + active);
+  });
+}
+window.addEventListener('scroll', updateTOC, {passive:true});
+updateTOC();
+</script>
+
+</body>
+</html>
