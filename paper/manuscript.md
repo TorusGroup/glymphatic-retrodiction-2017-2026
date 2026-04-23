@@ -6,7 +6,7 @@
 
 ## Authors
 
-Matheus Fink¹\*, Prometheus Lab (Torus OS)²
+Matheus Fink¹\*, Prometheus Lab²
 
 ¹ TorusGroup, MVP Factory, São Paulo, Brazil
 ² Prometheus Lab, Torus OS — Cognitive pipeline for AI-augmented scientific hypothesis generation
