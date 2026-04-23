@@ -11,7 +11,7 @@ Matheus Fink¹\*, Prometheus Lab (Torus OS)²
 ¹ TorusGroup, MVP Factory, São Paulo, Brazil
 ² Prometheus Lab, Torus OS — Cognitive pipeline for AI-augmented scientific hypothesis generation
 
-\*Correspondence: matheusfink@torusgroup.io
+\*Correspondence: matheusfinik@gmail.com
 
 ---
 
