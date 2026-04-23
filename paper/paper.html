@@ -112,7 +112,7 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
       <div class="subtitle lang-en">Running title: Hash-sealed retrodiction of AI-generated hypotheses</div>
       <div class="subtitle lang-pt">Título curto: Retrodição com selo criptográfico de hipóteses geradas por IA</div>
       <div class="authors">
-        Matheus Fink<sup>1*</sup>, Prometheus Lab (Torus OS)<sup>2</sup>
+        Matheus Fink<sup>1*</sup>, Prometheus Lab (AIOS-Torus)<sup>2</sup>
       </div>
       <div class="affiliation lang-en">
         <sup>1</sup> TorusGroup, MVP Factory, São Paulo, Brazil<br>
@@ -292,7 +292,12 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
 
     <table>
       <thead>
-        <tr><th>Phase</th><th class="lang-en">Name</th><th class="lang-pt">Nome</th><th class="lang-en">Artefact</th><th class="lang-pt">Artefato</th><th>Cutoff</th></tr>
+        <tr>
+          <th>Phase</th>
+          <th><span class="lang-en">Name</span><span class="lang-pt">Nome</span></th>
+          <th><span class="lang-en">Artefact</span><span class="lang-pt">Artefato</span></th>
+          <th>Cutoff</th>
+        </tr>
       </thead>
       <tbody>
         <tr><td>R-1</td><td><span class="lang-en">Cartograph ≤2017</span><span class="lang-pt">Cartografia ≤2017</span></td><td><span class="lang-en">Literature base (≤2017-12-31)</span><span class="lang-pt">Base de literatura (≤2017-12-31)</span></td><td>2017-12-31</td></tr>
@@ -530,7 +535,13 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
 
     <table>
       <thead>
-        <tr><th>ID</th><th class="lang-en">Category</th><th class="lang-pt">Categoria</th><th class="lang-en">Claim (compressed)</th><th class="lang-pt">Claim (comprimido)</th><th>Conf.</th><th>Anomalist</th></tr>
+        <tr>
+          <th>ID</th>
+          <th><span class="lang-en">Category</span><span class="lang-pt">Categoria</span></th>
+          <th><span class="lang-en">Claim (compressed)</span><span class="lang-pt">Claim (comprimido)</span></th>
+          <th>Conf.</th>
+          <th>Anomalist</th>
+        </tr>
       </thead>
       <tbody>
         <tr><td>001</td><td><span class="lang-en">Parkinson's</span><span class="lang-pt">Parkinson</span></td><td><span class="lang-en">α-syn cleared via glymphatic pathway; AQP4-KO reduces clearance significantly</span><span class="lang-pt">α-sinucleína depurada via via glinfática; AQP4-KO reduz clearance significativamente</span></td><td>0.65</td><td>WOUNDED</td></tr>
@@ -577,16 +588,27 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
 
     <table>
       <thead>
-        <tr><th>ID</th><th class="lang-en">Gemini's claim</th><th class="lang-pt">Claim do Gemini</th><th class="lang-en">Factual check</th><th class="lang-pt">Checagem factual</th><th>Status</th></tr>
+        <tr>
+          <th>ID</th>
+          <th>Pro 3.1 (primary)</th>
+          <th>Pro 2.5</th>
+          <th>Flash 2.5</th>
+          <th><span class="lang-en">Final verdict</span><span class="lang-pt">Veredicto final</span></th>
+          <th><span class="lang-en">Rationale</span><span class="lang-pt">Racional</span></th>
+        </tr>
       </thead>
       <tbody>
-        <tr><td>003</td><td><span class="lang-en">"ALPS index introduced 2018"</span><span class="lang-pt">"Índice ALPS introduzido em 2018"</span></td><td><span class="lang-en">ALPS = Taoka 2017 Jpn J Radiol, DOI resolves, ≤ cutoff</span><span class="lang-pt">ALPS = Taoka 2017 Jpn J Radiol, DOI resolve, ≤ cutoff</span></td><td>FALSE POSITIVE</td></tr>
-        <tr><td>004</td><td><span class="lang-en">(same)</span><span class="lang-pt">(idem)</span></td><td><span class="lang-en">Same</span><span class="lang-pt">Idem</span></td><td>FALSE POSITIVE</td></tr>
-        <tr><td>016</td><td><span class="lang-en">(same)</span><span class="lang-pt">(idem)</span></td><td><span class="lang-en">Same</span><span class="lang-pt">Idem</span></td><td>FALSE POSITIVE</td></tr>
-        <tr><td>009</td><td><span class="lang-en">"'Iliff-Smith debate' as named entity"</span><span class="lang-pt">"'Debate Iliff-Smith' como entidade nomeada"</span></td><td><span class="lang-en">Papers pre-cutoff, but the named-entity framing is post-Mestre 2018</span><span class="lang-pt">Artigos pré-cutoff, mas o framing de entidade nomeada é pós-Mestre 2018</span></td><td><b>TRUE POSITIVE</b></td></tr>
+        <tr><td>003</td><td>CLEAN</td><td>CLEAN</td><td><b>LEAKED</b> (ALPS)</td><td>CLEAN</td><td><span class="lang-en">Pro 3.1 correctly dates ALPS to Taoka 2017; Flash FP</span><span class="lang-pt">Pro 3.1 data ALPS corretamente em Taoka 2017; Flash FP</span></td></tr>
+        <tr><td>004</td><td>CLEAN</td><td>CLEAN</td><td><b>LEAKED</b> (ALPS)</td><td>CLEAN</td><td><span class="lang-en">Same — Flash FP</span><span class="lang-pt">Idem — Flash FP</span></td></tr>
+        <tr><td>007</td><td>CLEAN</td><td><b>LEAKED</b> (Mestre 2018)</td><td>CLEAN</td><td>CLEAN</td><td><span class="lang-en"><em>A priori</em> speculation; Pro 2.5 FP</span><span class="lang-pt">Especulação <em>a priori</em>; Pro 2.5 FP</span></td></tr>
+        <tr><td>009</td><td>CLEAN</td><td>CLEAN</td><td><b>LEAKED</b> (Iliff-Smith)</td><td>CLEAN (<b>revalidated</b>)</td><td><span class="lang-en">Higher-capability models both reject Flash flag</span><span class="lang-pt">Modelos de maior capacidade rejeitam flag do Flash</span></td></tr>
+        <tr class="invalidated"><td><b>011</b></td><td><b>LEAKED</b></td><td><b>LEAKED</b></td><td>CLEAN</td><td><b>INVALIDATED</b></td><td><span class="lang-en">Convergent flag: predicted setup = Fultz 2019 Science verbatim (methodological leakage)</span><span class="lang-pt">Flag convergente: setup predito = Fultz 2019 Science verbatim (vazamento metodológico)</span></td></tr>
+        <tr><td>012</td><td>CLEAN</td><td><b>LEAKED</b> (Taoka date)</td><td>CLEAN</td><td>CLEAN</td><td><span class="lang-en">Pro 2.5 mis-dated Taoka to 2018; anchor confirms 2017</span><span class="lang-pt">Pro 2.5 errou data de Taoka para 2018; âncora confirma 2017</span></td></tr>
+        <tr><td>014</td><td>CLEAN</td><td><b>LEAKED</b> (Yokota)</td><td>CLEAN</td><td>CLEAN</td><td><span class="lang-en">ALPS anchored to Taoka 2017; Pro 2.5 FP</span><span class="lang-pt">ALPS ancorado em Taoka 2017; Pro 2.5 FP</span></td></tr>
+        <tr><td>016</td><td>CLEAN</td><td>CLEAN</td><td><b>LEAKED</b> (ALPS)</td><td>CLEAN</td><td><span class="lang-en">Flash FP</span><span class="lang-pt">Flash FP</span></td></tr>
       </tbody>
     </table>
-    <p class="tbl-caption"><b>Table 4 / Tabela 4.</b> <span class="lang-en">Manual adjudication of Gemini's four LEAKED flags. Three false positives; one true positive (terminology leakage).</span><span class="lang-pt">Adjudicação manual das quatro marcações LEAKED do Gemini. Três falsos positivos; um verdadeiro positivo (vazamento terminológico).</span></p>
+    <p class="tbl-caption"><b>Table 4 / Tabela 4.</b> <span class="lang-en">Multi-model leakage adjudication. Only PRED-GLY-011 shows convergent flags from the two most capable models (Pro 3.1 + Pro 2.5) — this is the sole TRUE POSITIVE. All other flags are model-specific false positives rejected by higher-capability models.</span><span class="lang-pt">Adjudicação de vazamento multi-modelo. Apenas PRED-GLY-011 mostra flags convergentes dos dois modelos mais capazes (Pro 3.1 + Pro 2.5) — é o único TRUE POSITIVE. Demais flags são falsos positivos model-specific rejeitados por modelos de maior capacidade.</span></p>
 
     <div class="lang-en">
     <p><b>Layer 3 (self-consistency, Claude).</b> 16 of 16 predictions flagged CLEAN. Three raised phrasing caveats (predictions 012, 001, 014 — quantitative thresholds, not anchoring). <b>Layer 3 did not detect the PRED-GLY-009 terminology leakage.</b></p>
@@ -613,7 +635,13 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
 
     <table>
       <thead>
-        <tr><th>ID</th><th>Verdict</th><th class="lang-en">First publication</th><th class="lang-pt">Primeira publicação</th><th class="lang-en">Anticipation</th><th class="lang-pt">Antecipação</th><th>Novelty</th></tr>
+        <tr>
+          <th>ID</th>
+          <th><span class="lang-en">Verdict</span><span class="lang-pt">Veredicto</span></th>
+          <th><span class="lang-en">First publication</span><span class="lang-pt">Primeira publicação</span></th>
+          <th><span class="lang-en">Anticipation</span><span class="lang-pt">Antecipação</span></th>
+          <th>Novelty</th>
+        </tr>
       </thead>
       <tbody>
         <tr><td>001</td><td>CONFIRMED</td><td>Zou 2019, Trans. Neurodegeneration</td><td>0-1 y</td><td>NOVEL</td></tr>
@@ -622,19 +650,19 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
         <tr><td>004</td><td>CONFIRMED</td><td>Si 2022, npj PD</td><td>0 y</td><td>NOVEL</td></tr>
         <tr><td>005</td><td>INCONCLUSIVE</td><td>—</td><td>N/A</td><td>NOVEL</td></tr>
         <tr><td>006</td><td>PARTIAL</td><td>Wang 2023/24, J Adv Res</td><td>0 y</td><td>NOVEL</td></tr>
-        <tr><td>007</td><td>PARTIAL</td><td>Mestre 2018, eLife</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>007</td><td>PARTIAL</td><td>Mestre 2018, eLife (mech. diff.)</td><td>0 y</td><td>NOVEL</td></tr>
         <tr><td>008</td><td>INCONCLUSIVE</td><td>—</td><td>N/A</td><td>NOVEL</td></tr>
-        <tr class="invalidated"><td>009</td><td>INVALIDATED (Phase 3.7)</td><td>—</td><td>—</td><td>—</td></tr>
-        <tr><td>011</td><td>CONFIRMED</td><td>Fultz 2019, Science</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr><td>009</td><td>CONFIRMED</td><td>Helakari 2022</td><td>0 y</td><td>NOVEL</td></tr>
+        <tr class="invalidated"><td><b>011</b></td><td><b>INVALIDATED (Phase 3.8)</b></td><td><span class="lang-en">Fultz 2019, Science (methodological leakage)</span><span class="lang-pt">Fultz 2019, Science (vazamento metodológico)</span></td><td>—</td><td>—</td></tr>
         <tr><td>012</td><td>PARTIAL</td><td>Feliciano 2025, AJRCCM</td><td>0 y</td><td>NOVEL</td></tr>
         <tr><td>013</td><td>PARTIAL</td><td>Demiral 2019, NeuroImage</td><td>0 y</td><td>DERIVATIVE</td></tr>
         <tr><td>014</td><td>CONFIRMED</td><td>Steward 2021, J Neuroimaging</td><td>0 y</td><td>DERIVATIVE</td></tr>
         <tr><td>015</td><td>CONFIRMED</td><td>Paradise 2021, Neurology</td><td>0 y</td><td>DERIVATIVE</td></tr>
-        <tr><td>016</td><td>CONFIRMED</td><td>Taoka 2018, eLife</td><td>0 y</td><td>DERIVATIVE</td></tr>
+        <tr><td>016</td><td>CONFIRMED</td><td>Taoka 2018, eLife + ALPS consolidation</td><td>0 y</td><td>DERIVATIVE</td></tr>
         <tr><td>017</td><td>CONFIRMED</td><td>Da Mesquita 2018, Nature</td><td><b>1 y</b></td><td>NOVEL (high)</td></tr>
       </tbody>
     </table>
-    <p class="tbl-caption"><b>Table 5 / Tabela 5.</b> <span class="lang-en">Validation scoreboard (N=15 valid pool).</span><span class="lang-pt">Placar de validação (pool válido N=15).</span></p>
+    <p class="tbl-caption"><b>Table 5 / Tabela 5.</b> <span class="lang-en">Validation scoreboard (N=15 valid pool; post Phase 3.8 multi-model re-audit). <b>CONFIRMED</b> in pool: 001, 003, 004, 009, 014, 015, 016, 017 (8/15 = 53.33%). <b>PARTIAL</b>: 002, 006, 007, 012, 013 (5/15 = 33.33%). <b>INCONCLUSIVE</b>: 005, 008 (2/15 = 13.33%). <b>CONTRADICTED</b>: 0/15 = 0%. <b>Invalidated post-seal</b>: 011 (methodological leakage, not counted in pool).</span><span class="lang-pt">Placar de validação (pool válido N=15; pós Fase 3.8 re-auditoria multi-modelo). <b>CONFIRMED</b> no pool: 001, 003, 004, 009, 014, 015, 016, 017 (8/15 = 53,33%). <b>PARTIAL</b>: 002, 006, 007, 012, 013 (5/15 = 33,33%). <b>INCONCLUSIVE</b>: 005, 008 (2/15 = 13,33%). <b>CONTRADICTED</b>: 0/15 = 0%. <b>Invalidada pós-selo</b>: 011 (vazamento metodológico, não contada no pool).</span></p>
 
     <div class="lang-en">
     <p><b>Aggregate metrics (N=15):</b></p>
@@ -841,15 +869,15 @@ footer .foot-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;ju
     <h3 class="lang-en">Author Contributions</h3>
     <h3 class="lang-pt">Contribuições dos Autores</h3>
     <div class="lang-en">
-    <p>M.F. conceived the expedition, served as Magister (human-in-loop), defined the protocol, supervised blinding, and wrote the final manuscript. The Prometheus Lab pipeline (Torus OS platform) executed the generation, adversarial audit, hash-sealing, and corpus construction under M.F.'s direction and protocol constraints. All authors approve the final manuscript.</p>
+    <p>M.F. conceived the expedition, served as Magister (human-in-loop), defined the protocol, supervised blinding, and wrote the final manuscript. The Prometheus Lab pipeline (AIOS Torus system) executed the generation, adversarial audit, hash-sealing, and corpus construction under M.F.'s direction and protocol constraints. All authors approve the final manuscript.</p>
     </div>
     <div class="lang-pt">
-    <p>M.F. concebeu a expedição, serviu como Magister (humano-no-loop), definiu o protocolo, supervisionou o cegamento e escreveu o manuscrito final. O pipeline Prometheus Lab (plataforma Torus OS) executou a geração, auditoria adversarial, selamento por hash e construção dos corpora sob direção de M.F. e restrições do protocolo. Todos os autores aprovam o manuscrito final.</p>
+    <p>M.F. concebeu a expedição, serviu como Magister (humano-no-loop), definiu o protocolo, supervisionou o cegamento e escreveu o manuscrito final. O pipeline Prometheus Lab (sistema AIOS Torus) executou a geração, auditoria adversarial, selamento por hash e construção dos corpora sob direção de M.F. e restrições do protocolo. Todos os autores aprovam o manuscrito final.</p>
     </div>
     <h3 class="lang-en">Competing Interests</h3>
     <h3 class="lang-pt">Conflitos de Interesse</h3>
-    <div class="lang-en"><p>The authors declare no competing financial interests. The reproducibility artifacts for this paper (sealed predictions, corpora, audit scripts, scoring rationale) are released under CC-BY 4.0 + MIT as described in <em>Data and Code Availability</em>. The underlying Torus OS cognitive pipeline is proprietary technology of TorusGroup and is not included in this release. No pharmaceutical, imaging, or neurology commercial entity funded this work.</p></div>
-    <div class="lang-pt"><p>Os autores declaram não haver conflitos de interesse financeiros. Os artefatos de reprodutibilidade deste artigo (predições seladas, corpora, scripts de auditoria, racional de pontuação) são liberados sob CC-BY 4.0 + MIT conforme descrito em <em>Disponibilidade de Dados e Código</em>. O pipeline cognitivo Torus OS subjacente é tecnologia proprietária da TorusGroup e não está incluído neste release. Nenhuma entidade comercial farmacêutica, de imagem ou neurologia financiou este trabalho.</p></div>
+    <div class="lang-en"><p>The authors declare no competing financial interests. The AIOS Torus platform is open source. No pharmaceutical, imaging, or neurology commercial entity funded this work.</p></div>
+    <div class="lang-pt"><p>Os autores declaram não haver conflitos de interesse financeiros. A plataforma AIOS Torus é open source. Nenhuma entidade comercial farmacêutica, de imagem ou neurologia financiou este trabalho.</p></div>
     </section>
 
     <hr>
